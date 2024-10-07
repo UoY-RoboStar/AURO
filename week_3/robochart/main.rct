@@ -1,0 +1,72 @@
+package myPackage
+
+interface IOperations {
+	cmd_vel (  msg : Twist )
+}
+
+interface IEvents {
+	event scan : Seq( real )
+}
+
+robotic platform TurtleBot {
+	uses IEvents 
+	provides IOperations 
+}
+
+datatype Twist { 
+	linear : Vector3
+	angular : Vector3
+} 
+
+datatype Vector3 { 
+	x : real 
+	y : real 
+	z : real
+} 
+
+ 
+
+
+controller Driving {
+	requires IOperations 
+	stm TurtleBot3FSMRC {
+		const lvel : real, avel : real
+		requires IOperations initial i0
+		state Forward {
+			entry 
+			// FIXME: cmd_vel ( Twist (| linear = [| lvel , 0 , 0 |] , angular = [| 0 , 0 , 0 |] |) )
+			// FIXME: Confirm with Alvaro about what happens to components that are not assigned?
+			cmd_vel ( Twist (| linear = Vector3 (| x = lvel , y = 0 , z = 0 |) , angular = Vector3 (| x = 0 , y = 0 , z = 0 |) |) )
+		}
+		transition t0 {
+			from i0
+			to Forward
+		action # C
+		}
+		state Turning {
+		//entry cmd_vel ( Twist (| linear = [| 0 , 0 , 0 |] , angular = [| 0 , 0 , avel |] |) )
+		entry cmd_vel ( Twist (| linear = Vector3 (| x = 0 , y = 0 , z = 0 |) , angular = Vector3 (| x = 0 , y = 0 , z = avel |) |) )
+		}
+		transition t1 {
+			from Forward
+			to Turning
+		condition since ( C ) >= 4
+			action # C
+		}
+		clock C
+
+	transition t2 {
+			from Turning
+			to Forward
+			condition since ( C ) > 1
+			action # C
+		}
+	}
+
+}
+
+module Module {
+	rref rp_ref0 = TurtleBot
+	cref ctrl_ref0 = Driving
+}
+

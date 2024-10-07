@@ -1,0 +1,35 @@
+-- *************************************************************************
+-- Copyright (c) 2019 University of York and others
+--
+-- This program and the accompanying materials are made available under the
+-- terms of the Eclipse Public License 2.0 which is available at
+-- http://www.eclipse.org/legal/epl-2.0.
+--
+-- SPDX-License-Identifier: EPL-2.0
+--
+-- Contributors:
+--   Alvaro Miyazawa - initial definition
+-- *************************************************************************
+
+access_(<x>^xs,1) = x
+access_(<x>^xs,N) = access_(xs,N-1)
+
+update_(<x>^xs,e,1) = <e>^xs
+update_(<x>^xs,e,N) = <x>^update_(xs,e,N-1)
+			   
+tuple2_1((p1,_)) = p1
+tuple2_2((_,p2)) = p2
+tuple3_1((p1,p2,p3)) = p1
+tuple3_2((p1,p2,p3)) = p2
+tuple3_3((p1,p2,p3)) = p3
+tuple4_1((p1,p2,p3,p4)) = p1
+tuple4_2((p1,p2,p3,p4)) = p2
+tuple4_3((p1,p2,p3,p4)) = p3
+tuple4_4((p1,p2,p3,p4)) = p4
+tuple5_1((p1,p2,p3,p4,p5)) = p1
+tuple5_2((p1,p2,p3,p4,p5)) = p2
+tuple5_3((p1,p2,p3,p4,p5)) = p3
+tuple5_4((p1,p2,p3,p4,p5)) = p4
+tuple5_5((p1,p2,p3,p4,p5)) = p5
+
+datatype InOut = in | out

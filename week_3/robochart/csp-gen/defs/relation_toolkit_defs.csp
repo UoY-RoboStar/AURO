@@ -1,0 +1,54 @@
+-- *************************************************************************
+-- Copyright (c) 2019 University of York and others
+--
+-- This program and the accompanying materials are made available under the
+-- terms of the Eclipse Public License 2.0 which is available at
+-- http://www.eclipse.org/legal/epl-2.0.
+--
+-- SPDX-License-Identifier: EPL-2.0
+--
+-- Contributors:
+--   Alvaro Miyazawa - initial definition
+-- *************************************************************************
+
+relation_toolkit_first((a,b)) = a
+relation_toolkit_second((a,b)) = b
+relation_toolkit_maplet(a,b) = (a,b)
+relation_toolkit_dom(r) = {relation_toolkit_first(p) | p <- r}
+relation_toolkit_ran(r) = {relation_toolkit_second(p) | p <- r}
+relation_toolkit_relcomp(r,s) = {(relation_toolkit_first(a),relation_toolkit_second(b)) | a <- r, b <- s, relation_toolkit_second(a) == relation_toolkit_first(b) }
+relation_toolkit_funcomp(s,r) = relation_toolkit_relcomp(r,s)
+relation_toolkit_dres(a,r) = {p | p <- r, member(relation_toolkit_first(p), a)}
+relation_toolkit_rres(r,b) = {p | p <- r, member(relation_toolkit_second(p), b)}
+relation_toolkit_dsub(a,r) = {p | p <- r, not member(relation_toolkit_first(p), a)}
+relation_toolkit_rsub(r,b) = {p | p <- r, not member(relation_toolkit_second(p), b)}
+relation_toolkit_rinv(r) = {(relation_toolkit_second(p),relation_toolkit_first(p)) | p <- r}
+relation_toolkit_rimage(r,a) = {relation_toolkit_second(p) | p <- r, member(relation_toolkit_first(p),a)}
+relation_toolkit_override(r,s) = union(relation_toolkit_dsub(relation_toolkit_dom(s),r),s)
+
+aux_tr_closure(r,tr) = let aux = relation_toolkit_relcomp(tr,r) within if aux == tr then aux else aux_tr_closure(r,aux) 
+relation_toolkit_tr_closure(r) = aux_tr_closure(r,r)
+
+-- I have not yet implemented id and refl_tr_closure because it requires information about the base types.
+-- This information is available to the generator, but it would require these functions to be treated differently.
+-- Alternatively, I can change the definition of id and refl_tr_closure (in robochart) to take an extra parameter
+-- corresponding to the base type.
+
+pre_relation_toolkit_first(p) = true
+pre_relation_toolkit_second(p) = true
+pre_relation_toolkit_maplet(x, y) = true
+pre_relation_toolkit_dom(r) = true
+pre_relation_toolkit_ran(r) = true
+pre_relation_toolkit_id() = true
+pre_relation_toolkit_relcomp(r, s) = true
+pre_relation_toolkit_funcomp(s, r) = true
+pre_relation_toolkit_dres(a,r) = true
+pre_relation_toolkit_rres(r, b) = true
+pre_relation_toolkit_dsub(a,r) = true
+pre_relation_toolkit_rsub(r, b) = true
+pre_relation_toolkit_rinv(r) = true
+pre_relation_toolkit_rimage(r, a) = true
+pre_relation_toolkit_override(r, s) = true
+pre_relation_toolkit_tr_closure(r) = true
+pre_relation_toolkit_refl_tr_closure(r) = true
+

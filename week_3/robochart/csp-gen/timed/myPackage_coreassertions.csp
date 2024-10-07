@@ -1,0 +1,101 @@
+
+--
+-- RoboChart generator version 3.0.0.202401231330
+-- Automatically generated on 07-10-2024 15:03:45
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+include "myPackage.csp"
+
+
+
+-- generate myPackage_Driving
+P_myPackage_Driving = let
+	id__ = 0
+	
+	
+	
+		
+within
+	myPackage::Driving::O__(id__,
+			    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+			    const_myPackage_Driving_TurtleBot3FSMRC_avel)
+
+assert P_myPackage_Driving :[deadlock-free]	
+assert P_myPackage_Driving;RUN({r__}) :[deadlock-free]
+assert P_myPackage_Driving :[deterministic]
+assert P_myPackage_Driving :[divergence-free]
+
+-- generate myPackage_Driving_TurtleBot3FSMRC
+P_myPackage_Driving_TurtleBot3FSMRC = let
+	id__ = 0
+	
+	
+	
+within
+	myPackage::Driving::TurtleBot3FSMRC::O__(
+		id__,
+		const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+		const_myPackage_Driving_TurtleBot3FSMRC_avel
+	)
+assert P_myPackage_Driving_TurtleBot3FSMRC :[deadlock-free]	
+assert P_myPackage_Driving_TurtleBot3FSMRC;RUN({r__}) :[deadlock-free]
+assert P_myPackage_Driving_TurtleBot3FSMRC :[deterministic]
+assert P_myPackage_Driving_TurtleBot3FSMRC :[divergence-free]
+-- timed deadlock free
+assert prioritise(P_myPackage_Driving_TurtleBot3FSMRC[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_myPackage_Driving_TurtleBot3FSMRC
+-- timed deadlock free
+assert prioritise(P_myPackage_Driving[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_myPackage_Driving
+
+-- generate myPackage_Module
+P_myPackage_Module = let
+	id__ = 0
+	
+	
+	
+		
+	
+within
+	myPackage::Module::O__(id__,
+			    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+			    const_myPackage_Driving_TurtleBot3FSMRC_avel)
+assert P_myPackage_Module :[deadlock-free]	
+assert P_myPackage_Module;RUN({r__}) :[deadlock-free]
+assert P_myPackage_Module :[deterministic]
+assert P_myPackage_Module :[divergence-free]
+
+-- generate myPackage_Module_ctrl_ref0
+P_myPackage_Module_ctrl_ref0 = let
+	id__ = 0
+	
+	
+	
+		
+within
+	myPackage::Module::ctrl_ref0::O__(id__,
+			    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+			    const_myPackage_Driving_TurtleBot3FSMRC_avel)
+
+assert P_myPackage_Module_ctrl_ref0 :[deadlock-free]	
+assert P_myPackage_Module_ctrl_ref0;RUN({r__}) :[deadlock-free]
+assert P_myPackage_Module_ctrl_ref0 :[deterministic]
+assert P_myPackage_Module_ctrl_ref0 :[divergence-free]
+
+-- timed deadlock free
+assert prioritise(P_myPackage_Module_ctrl_ref0[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_myPackage_Module_ctrl_ref0
+-- timed deadlock free
+assert prioritise(P_myPackage_Module[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_myPackage_Module

@@ -1,0 +1,7 @@
+[
+	{
+		"name": "myPackage::Driving::TurtleBot3FSMRC is deadlock free (A0) [failures divergences model]",
+		"type": "deadlock-free",
+		"negated": false 
+	}
+]

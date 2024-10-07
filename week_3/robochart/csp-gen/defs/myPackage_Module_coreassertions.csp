@@ -1,0 +1,50 @@
+
+--
+-- RoboChart generator version 3.0.0.202401231330
+-- Automatically generated on 07-10-2024 15:03:45
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+include "myPackage_Module.csp"
+include "core_defs.csp"
+include "myPackage_defs.csp"
+include "state_defs.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+channel r__
+-- generate myPackage_Module
+P_myPackage_Module = let
+	id__ = 0
+	
+	
+	
+		
+	
+within
+	myPackage_Module::O__(id__,
+			    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+			    const_myPackage_Driving_TurtleBot3FSMRC_avel)
+assert P_myPackage_Module :[deadlock-free]	
+assert P_myPackage_Module;RUN({r__}) :[deadlock-free]
+assert P_myPackage_Module :[deterministic]
+assert P_myPackage_Module :[divergence-free]
+
+-- generate myPackage_Module_ctrl_ref0
+P_myPackage_Module_ctrl_ref0 = let
+	id__ = 0
+	
+	
+	
+		
+within
+	myPackage_Module::ctrl_ref0::O__(id__,
+			    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+			    const_myPackage_Driving_TurtleBot3FSMRC_avel)
+
+assert P_myPackage_Module_ctrl_ref0 :[deadlock-free]	
+assert P_myPackage_Module_ctrl_ref0;RUN({r__}) :[deadlock-free]
+assert P_myPackage_Module_ctrl_ref0 :[deterministic]
+assert P_myPackage_Module_ctrl_ref0 :[divergence-free]
+

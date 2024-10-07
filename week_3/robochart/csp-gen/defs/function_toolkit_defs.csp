@@ -1,0 +1,39 @@
+-- *************************************************************************
+-- Copyright (c) 2019 University of York and others
+--
+-- This program and the accompanying materials are made available under the
+-- terms of the Eclipse Public License 2.0 which is available at
+-- http://www.eclipse.org/legal/epl-2.0.
+--
+-- SPDX-License-Identifier: EPL-2.0
+--
+-- Contributors:
+--   Alvaro Miyazawa - initial definition
+-- *************************************************************************
+
+-- the functions isTotal, isInjection, isTotalInjection, isSurjection, isTotalSurjection,
+-- isBijections and isFiniteInjection are not yet implemented because they need information
+-- about carrier sets.
+
+-- sets in our encoding in CSPM are always finite
+
+-- include "relation_toolkit.csp"
+function_toolkit_isFinite(s) = true
+
+function_toolkit_isFiniteFunction(f) = function_toolkit_isFinite(f)
+
+function_toolkit_disjoint(f) = Union({inter(relation_toolkit_second(p),relation_toolkit_second(q)) | p <- f, q <-f , p != q}) == {}
+
+function_toolkit_partitions(f,a) = function_toolkit_disjoint(f) and Union(relation_toolkit_ran(f)) == a
+
+pre_function_toolkit_isTotal(f) = true
+pre_function_toolkit_isInjection(f) = true
+pre_function_toolkit_isTotalInjection(f) = true
+pre_function_toolkit_isSurjection(f) = true
+pre_function_toolkit_isTotalSurjection(f) = true
+pre_function_toolkit_isBijection(f) = true
+pre_function_toolkit_isFinite(s) = true
+pre_function_toolkit_isFiniteFunction(f) = true
+pre_function_toolkit_isFiniteInjection(f) = true
+pre_function_toolkit_disjoint(f) = true
+pre_function_toolkit_partitions(f, a) = true

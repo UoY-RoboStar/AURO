@@ -1,0 +1,24 @@
+
+--
+-- RoboChart generator version 3.0.0.202401231330
+-- Automatically generated on 07-10-2024 15:03:45
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+-- data definitions used by platform:/resource/turtlebot-robochart-square/main.rct
+nametype myPackage_Twist = (myPackage_Vector3,myPackage_Vector3)
+myPackage_Twist_linear((linear,angular)) = linear
+update_myPackage_Twist_linear((linear,angular),v__) = (v__,angular)
+myPackage_Twist_angular((linear,angular)) = angular
+update_myPackage_Twist_angular((linear,angular),v__) = (linear,v__)
+nametype myPackage_Vector3 = (core_real,core_real,core_real)
+myPackage_Vector3_x((x,y,z)) = x
+update_myPackage_Vector3_x((x,y,z),v__) = (v__,y,z)
+myPackage_Vector3_y((x,y,z)) = y
+update_myPackage_Vector3_y((x,y,z),v__) = (x,v__,z)
+myPackage_Vector3_z((x,y,z)) = z
+update_myPackage_Vector3_z((x,y,z),v__) = (x,y,v__)
+
+	

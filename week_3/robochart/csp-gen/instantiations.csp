@@ -1,0 +1,95 @@
+-- generate --
+
+-- MODULE CONSTANTS
+
+-- CONTROLLER CONSTANTS
+
+-- STATEMACHINE CONSTANTS
+
+-- generate nat
+nametype core_nat = union({0..2},{calc_type_min(Union(
+			{}))..calc_type_max(Union({}))})
+
+-- generate const_myPackage_Driving_TurtleBot3FSMRC_avel
+const_myPackage_Driving_TurtleBot3FSMRC_avel = 0
+
+-- OPERATION CONSTANTS
+
+-- BASIC TYPES
+
+-- generate core_clock_type
+nametype core_clock_type = {0..10}
+
+-- BASIC FUNCTIONS
+
+-- generate string
+nametype core_string = LSeq(Char,2)
+
+-- generate real
+nametype core_real = union({ -2..2},{calc_type_min(Union(
+			{{ -2..2},{ -2..2}}))..calc_type_max(Union({{ -2..2},{ -2..2}}))}) 
+
+-- VECTOR TYPES AND OPERATIONS
+
+
+-- CLOCKS
+
+-- generate int
+nametype core_int = union({ -2..2},{calc_type_min(Union(
+			{}))..calc_type_max(Union({}))})
+
+-- generate const_Driving_stm0_lvel
+const_Driving_stm0_lvel = 0
+
+-- generate -- OPERATION BOUNDS
+
+-- MODULE CONSTANTS
+
+-- CONTROLLER CONSTANTS
+
+-- STATEMACHINE CONSTANTS
+
+-- generate const_myPackage_Driving_TurtleBot3FSMRC_lvel
+const_myPackage_Driving_TurtleBot3FSMRC_lvel = 0
+
+-- generate Div
+Div(e1,e2,T) = if member(e1/e2,T) then e1/e2 else e1
+
+-- generate Neg
+Neg(e1,T) = if member(-e1,T) then -e1 else e1
+
+-- generate const_Driving_stm0_avel
+const_Driving_stm0_avel = 0
+
+-- OPERATION CONSTANTS
+
+-- BASIC TYPES
+
+-- generate boolean
+nametype core_boolean = Bool
+
+-- generate Mult
+Mult(e1,e2,T) = if member(e1*e2,T) then e1*e2 else e1
+
+-- generate Modulus
+Modulus(e1,e2,T) = if member(e1%e2,T) then e1%e2 else e1
+
+-- generate const_myPackage_Driving_stm0_lvel
+const_myPackage_Driving_stm0_lvel = 0
+
+-- generate const_myPackage_Driving_stm0_avel
+const_myPackage_Driving_stm0_avel = 0
+
+-- OPERATION CONSTANTS
+
+-- BASIC TYPES
+
+-- generate PrimitiveType
+nametype myPackage_PrimitiveType = {0,1}
+
+-- generate Plus
+Plus(e1,e2,T) = if member(e1+e2,T) then e1+e2 else e1
+
+-- generate Minus
+Minus(e1,e2,T) = if member(e1-e2,T) then e1-e2 else e1
+

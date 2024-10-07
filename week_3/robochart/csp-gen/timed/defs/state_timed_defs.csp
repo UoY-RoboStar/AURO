@@ -1,0 +1,40 @@
+-- *************************************************************************
+-- Copyright (c) 2019 University of York and others
+--
+-- This program and the accompanying materials are made available under the
+-- terms of the Eclipse Public License 2.0 which is available at
+-- http://www.eclipse.org/legal/epl-2.0.
+--
+-- SPDX-License-Identifier: EPL-2.0
+--
+-- Contributors:
+--   Pedro Ribeiro - initial definition
+-- *************************************************************************
+
+---------------------------------------------------------------------------
+-- Definitions for share-CSP (timed)
+---------------------------------------------------------------------------
+
+channel share__, timed_share__
+
+-- Definition of RUN that includes tock
+CRUN(x__) = RUN(union(x__,{tock}))
+
+TRUN(x__) = CRUN(x__)
+
+-- Timed version of SStop
+SStop = CRUN({|share__|})
+
+Timed(OneStep) {
+	-- This MUST NOT be applied to a process where time is being counted before
+	-- another event happens, as otherwise a share__ event could lead to time being re-counted.
+	
+	share__choice(x__) = x__ [] share__ -> share__choice(x__)
+	
+}
+
+SHARE_WAIT(d__) = (if d__ > 0 then (tock -> SHARE_WAIT(d__-1)) else TSKIP)
+				  []
+				  share__ -> SHARE_WAIT(d__)
+				
+SHARE_WAIT_INTERVAL(S__) = |~| x__ : S__ @ SHARE_WAIT(x__)				

@@ -1,0 +1,62 @@
+
+--
+-- RoboChart generator version 3.0.0.202401231330
+-- Automatically generated on 07-10-2024 15:03:45
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+include "core_timed_defs.csp"
+include "core_defs.csp"
+include "myPackage_defs.csp"
+include "state_timed_defs.csp"
+include "myPackage_Driving.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+
+transparent wbisim
+channel r__
+-- generate myPackage_Driving
+P_myPackage_Driving = let
+	id__ = 0
+	
+	
+	
+		
+within
+	myPackage_Driving::O__(id__,
+			    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+			    const_myPackage_Driving_TurtleBot3FSMRC_avel)
+
+assert P_myPackage_Driving :[deadlock-free]	
+assert P_myPackage_Driving;RUN({r__}) :[deadlock-free]
+assert P_myPackage_Driving :[deterministic]
+assert P_myPackage_Driving :[divergence-free]
+
+-- generate myPackage_Driving_TurtleBot3FSMRC
+P_myPackage_Driving_TurtleBot3FSMRC = let
+	id__ = 0
+	
+	
+	
+within
+	myPackage_Driving::TurtleBot3FSMRC::O__(
+		id__,
+		const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+		const_myPackage_Driving_TurtleBot3FSMRC_avel
+	)
+assert P_myPackage_Driving_TurtleBot3FSMRC :[deadlock-free]	
+assert P_myPackage_Driving_TurtleBot3FSMRC;RUN({r__}) :[deadlock-free]
+assert P_myPackage_Driving_TurtleBot3FSMRC :[deterministic]
+assert P_myPackage_Driving_TurtleBot3FSMRC :[divergence-free]
+-- timed deadlock free
+assert prioritise(P_myPackage_Driving_TurtleBot3FSMRC[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_myPackage_Driving_TurtleBot3FSMRC
+-- timed deadlock free
+assert prioritise(P_myPackage_Driving[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_myPackage_Driving

@@ -1,0 +1,34 @@
+
+--
+-- RoboChart generator version 3.0.0.202401231330
+-- Automatically generated on 07-10-2024 15:03:45
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+include "defs/state_timed_defs.csp"
+include "defs/function_toolkit_defs.csp"
+include "defs/robochart_defs.csp"
+include "defs/myPackage_defs.csp"
+include "defs/core_defs.csp"
+include "defs/core_timed_defs.csp"
+include "defs/sequence_toolkit_defs.csp"
+include "defs/myPackage.csp"
+include "defs/set_toolkit_defs.csp"
+include "instantiations.csp"
+include "defs/relation_toolkit_defs.csp"
+
+channel r__
+
+-- A0 - timed deadlock free
+assert prioritise(let 
+	id__ = 0
+	
+	
+	
+within
+	myPackage::Driving::TurtleBot3FSMRC::D__(id__,
+			    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+			    const_myPackage_Driving_TurtleBot3FSMRC_avel)[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+

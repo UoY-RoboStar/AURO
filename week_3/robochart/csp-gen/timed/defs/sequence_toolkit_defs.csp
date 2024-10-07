@@ -1,0 +1,110 @@
+-- *************************************************************************
+-- Copyright (c) 2019 University of York and others
+--
+-- This program and the accompanying materials are made available under the
+-- terms of the Eclipse Public License 2.0 which is available at
+-- http://www.eclipse.org/legal/epl-2.0.
+--
+-- SPDX-License-Identifier: EPL-2.0
+--
+-- Contributors:
+--   Alvaro Miyazawa - initial definition
+-- *************************************************************************
+
+-- The pre_sequence_toolkit_isInjectiveSequence is not implemented because it depends on a carrier set 
+
+-- include "set_toolkit.csp"
+-- include "relation_toolkit.csp"
+-- include "function_toolkit.csp"
+
+sequence_toolkit_range(x,y) = <x..y>
+
+sequence_toolkit_iter(n,r) = if n == 1 then r
+            else relation_toolkit_relcomp(r,sequence_toolkit_iter(n-1,r))
+
+sequence_toolkit_isMin(x,s) = member(x,s) and card({a | a<-s, a < x}) == 0
+sequence_toolkit_isMax(x,s) = member(x,s) and card({a | a<-s, a > x}) == 0 
+
+sequence_toolkit_hasMin(a) = card({x|x<-a,sequence_toolkit_isMin(x,a)}) == 1
+sequence_toolkit_hasMax(a) = card({x|x<-a,sequence_toolkit_isMax(x,a)}) == 1
+
+sequence_toolkit_the({a}) = a
+
+sequence_toolkit_min(a) = sequence_toolkit_the({x|x<-a,sequence_toolkit_isMin(x,a)})
+sequence_toolkit_max(a) = sequence_toolkit_the({x|x<-a,sequence_toolkit_isMax(x,a)})
+
+sequence_toolkit_isNonEmpty(s) = length(s) > 0
+
+sequence_toolkit_concat(s,t) = s^t
+
+sequence_toolkit_reverse(<>) = <>
+sequence_toolkit_reverse(<x>^xs) = sequence_toolkit_reverse(xs)^<x>
+
+sequence_toolkit_head(<x>^xs) = x
+
+sequence_toolkit_tail(<x>^xs) = xs
+
+
+sequence_toolkit_last(xs^<x>) = x
+
+sequence_toolkit_front(xs^<x>) = xs
+
+sequence_toolkit_seq2rel(xs) = let
+	aux_seq2rel(<x>^xs,n) = union({(n,x)},aux_seq2rel(xs,n+1))
+	aux_seq2rel(<>,_) = {}
+within
+	aux_seq2rel(xs,1)
+
+sequence_toolkit_get(f,i) = sequence_toolkit_the({relation_toolkit_second(x)|x<-f,relation_toolkit_first(x) == i})
+
+aux_squash({},_) = <>
+aux_squash(f,i) = let a = {p | p <- f, relation_toolkit_first(p) == i}
+within
+	if card(a) == 1 then <relation_toolkit_second(sequence_toolkit_the(a))>^aux_squash(diff(f,a),i+1)
+	else aux_squash(f,i+1)
+
+sequence_toolkit_squash(f) = aux_squash(f,1)
+
+sequence_toolkit_extract(a,s) = let r = sequence_toolkit_seq2rel(s) within 
+	<sequence_toolkit_get(r,i) | i <- sequence_toolkit_range(1,length(s)), member(i,a)>
+
+sequence_toolkit_filter(s,a) = <x | x <- s, member(x,a)>
+
+sequence_toolkit_prefix(<>,ys) = true
+sequence_toolkit_prefix(<x>^xs,<>) = false
+sequence_toolkit_prefix(<x>^xs,<y>^ys) = if x == y then sequence_toolkit_prefix(xs,ys) else false
+
+sequence_toolkit_suffix(<>,ys) = true
+sequence_toolkit_suffix(xs^<x>,<>) = false
+sequence_toolkit_suffix(xs^<x>,ys^<y>) = if x == y then sequence_toolkit_suffix(xs,ys) else false
+
+sequence_toolkit_infix(<x>^xs,<y>^ys) = if x == y then sequence_toolkit_infix(xs,ys) else sequence_toolkit_infix(<x>^xs, ys)
+sequence_toolkit_infix(<x>^xs, <>) = false
+sequence_toolkit_infix(<>, <y>^ys) = true
+
+sequence_toolkit_dconcat(<>) = <>
+sequence_toolkit_dconcat(<x>) = x
+sequence_toolkit_dconcat(<x>^<y>^xs) = sequence_toolkit_dconcat(<x^y>^xs)
+
+pre_sequence_toolkit_range(x, y) = true
+pre_sequence_toolkit_iter(n, r) = true
+pre_sequence_toolkit_size(a)= function_toolkit_isFinite(a)
+pre_sequence_toolkit_hasMin(a) = true
+pre_sequence_toolkit_hasMax(a) = true
+pre_sequence_toolkit_min(a) = sequence_toolkit_hasMin(a) 
+pre_sequence_toolkit_max(a) = sequence_toolkit_hasMax(a)
+pre_sequence_toolkit_isNonEmpty(s) = true
+pre_sequence_toolkit_isInjectiveSequence(s) = true
+pre_sequence_toolkit_concat(s, t) = true
+pre_sequence_toolkit_reverse(s) = true
+pre_sequence_toolkit_head(s) = sequence_toolkit_isNonEmpty(s)
+pre_sequence_toolkit_last(s) = sequence_toolkit_isNonEmpty(s)
+pre_sequence_toolkit_tail(s) = true
+pre_sequence_toolkit_front(s) = true
+pre_sequence_toolkit_squash(f) = function_toolkit_isFiniteFunction(f)
+pre_sequence_toolkit_extract(a, s) = true
+pre_sequence_toolkit_filter(s, a) = true
+pre_sequence_toolkit_prefix(s, t) = true
+pre_sequence_toolkit_suffix(s, t) = true
+pre_sequence_toolkit_infix(s, t) = true
+pre_sequence_toolkit_dconcat(s) = true

@@ -1,0 +1,211 @@
+-- *************************************************************************
+-- Copyright (c) 2020 University of York and others
+--
+-- This program and the accompanying materials are made available under the
+-- terms of the Eclipse Public License 2.0 which is available at
+-- http://www.eclipse.org/legal/epl-2.0.
+--
+-- SPDX-License-Identifier: EPL-2.0
+--
+-- Contributors:
+--   Pedro Ribeiro - initial definition
+-- *************************************************************************
+
+---------------------------------------------------------------------------
+-- Definition of timed operators and tick-tock semantics
+---------------------------------------------------------------------------
+
+-- Events
+-- tock' is used to implement the timed deadlock check
+channel tock, tock'
+
+-- For definition of timed sections, no time is implicitly added
+OneStep(_) = 0
+
+-- Often used outside timed sections to ensure maximal progress
+external prioritise
+
+---------------------------------------------------------------------------
+-- Definition of tick-tock operators
+---------------------------------------------------------------------------
+
+-- Timelock (untimed STOP)
+USTOP = STOP
+
+Timed(OneStep) {
+	
+	-- Timed SKIP
+	TSKIP = SKIP 
+	
+	-- Nondeterministic wait
+	WAIT_INTERVAL(S__) = |~| x__ : S__ @ WAIT(x__)
+	
+	-- Starting deadline (Process)
+	StartBy(P__,d__) = P__ [] (WAIT(d__);USTOP)
+	
+	-- Deadline on process to terminate
+	EndBy(P__,d__) = P__ /\ (WAIT(d__);USTOP)
+	Deadline(P__,d__) = EndBy(P__,d__)
+	
+	-- Deadline on event prefixing
+	EDeadline(e__,d__) = e__ -> SKIP [] (WAIT(d__);USTOP)
+	
+	-- Strict timed interrupt
+	TimedInterrupt(P__,d__) = timed_priority(P__ /+Events+\ RT__(d__))
+	
+	-- Timeout process without explicit use of parallel composition
+	TimeOut(P__,d__,Q__) = (P__ /+Events+\ ((TimedInterrupt(Some__,d__);STOP);RUN(Events)))
+						   []
+						   (WAIT(d__);Q__)
+}
+
+---------------------------------------------------------------------------
+-- Special cases
+---------------------------------------------------------------------------
+
+-- NOTE: TimeOut(P__,d__,Q__) cannot be used in a recursive definition as 
+-- 		 /+ +\ cannot be recursed. However, TimeOut_1(P__,Q__) can be used.
+-- 
+-- Besides, TimeOut(P__,d__,Q__) can result in a non-optimal representation
+-- in FDR.
+
+-- TimeOut_1(P__,Q__) is an efficient timeout operator for d__ = 1, that 
+-- can be used when P__ is known not to have an initial deadline.
+
+TimeOut_1(P__,Q__) = (USTOP[+{tock}+]P__) [] (tock -> Q__)
+
+-- Similar observation applies to the TimedInterrupt operator. Below is
+-- an optimised version that is applicable whenever P__ is known not to
+-- impose a deadline.
+
+TimedInterrupt_1(P__) = (USTOP[+{tock}+]P__) /\ (tock -> TSKIP)
+
+TimedInterruptSeq(e__,d__,Q__) =
+	let
+		TT(n__) = if n__ < d__ then TimeOut_1(e__ -> SKIP,TT(n__ + 1)) else Q__
+	within
+		TT(0)
+
+-- The following process TCHAOS is a version of CHAOS suitable for use
+-- in tick-tock: it offers the events in S__ non-deterministically and
+-- can either timelock or deadlock. Note that tock does not need to
+-- be a member of S__.
+
+TCHAOS(S__) = CHAOS(S__) /\ (USTOP |~| tock -> TCHAOS(S__)) 
+
+-- When used with S__ as the set of all events of interest, then TCHAOS
+-- is the top of the refinement order.
+--
+-- TCHAOS(S__) is equivalent to the following definition within a timed
+-- section:
+--
+-- Timed(OneStep) {
+--
+--   TCHAOS(S__) = C(union(S__,{tock}))
+--   C(S__) = (|~| e__ : S__ @ e__ -> C(S__)) |~| USTOP
+--
+-- }
+-- 
+-- This is, however, not used as it can cause an inefficient compilation
+-- by FDR.
+
+---------------------------------------------------------------------------
+-- Auxiliary processes
+---------------------------------------------------------------------------
+
+-- Wait for use outside Timed Sections, and where termination is immediate
+wait(n__) = if n__ > 0 then tock -> wait(n__-1) else SKIP
+
+-- Auxiliary counter for the TimedInterrupt definition above
+RT__(d__) = if d__ > 0 	then RUN(diff(Events,{tock})) /\ tock -> RT__(d__-1)
+						else SKIP
+						
+Some__ = [] x__ : Events @ x__ -> SKIP					
+
+-- Termination at any time
+SKIP_ANYTIME = SKIP |~| tock -> SKIP_ANYTIME
+
+---------------------------------------------------------------------------
+-- Clocks
+---------------------------------------------------------------------------
+
+-- Calculation of types for clocks
+clock_type_max(S__) = clock_type_seq_max(seq(S__),0)
+clock_type_seq_max(<>,x__) = x__
+clock_type_seq_max(<elem__>^xs__,x__) = 
+	(if elem__ > x__ then clock_type_seq_max(xs__,elem__) 
+					 else clock_type_seq_max(xs__,x__))
+					 
+clock_type_plus(x__,y__,t__) = if member(x__+y__,t__) then x__+y__ else x__
+
+-- Useful to define semantics of clock resets
+DoClockReset(CS__) = ||| c__ : CS__ @ c__ -> SKIP
+
+---------------------------------------------------------------------------
+-- Semantic encoding
+---------------------------------------------------------------------------
+
+module model_shifting(Sigma)
+
+external prioritise
+external prioritisepo
+
+transparent sbisim
+
+-- Note that for the purposes of encoding refusals/acceptances in this model
+-- ref.x, rather than x' is used, unlike that discussed in the paper. This 
+-- is a technicality as it makes it easier to defined a parametrised channel.
+
+channel ref:union(Sigma,{tock,tick})
+channel acc:union(Sigma,{tock,tick})
+
+channel stab
+channel tick
+
+-- The partial order gives each event 'x' priority over 'ref.x'
+order = {(x,ref.x) | x:union(Sigma,{tock,tick})}
+
+---------------------------------------------------------------------------
+-- Context C1
+---------------------------------------------------------------------------
+
+-- This is the first context, whereby in interleaving with P we have the
+-- process that can perform ref or stab, and is prioritised according to
+-- 'order', whereby 'Sigma' have same priority as 'tau' and 'tick'.
+--
+-- This is effectively an implementation of the RT-model, because after each
+-- normal trace (ie, with events drawn from Sigma) we have the possibility
+-- to also observe in the trace refusal information, at that point.
+
+C1(P) = sbisim(
+			prioritisepo(P ||| RUN({|ref,stab|}), 
+						 union(Sigma,{|ref,tock,tick|}), 
+						 order, 
+						 union(Sigma,{tock,tick}))
+		)
+
+---------------------------------------------------------------------------
+-- Encoding of 'tick-tock'-CSP model
+---------------------------------------------------------------------------
+
+C2(P) = C1(P) [| union(Sigma,{|ref,stab,tock,tick|}) |] Sem
+
+Sem = ([] x : union(Sigma,{tock,tick}) @ x -> Sem)
+      [] (ref?x -> Ref)
+      [] (stab -> Ref)
+
+Ref = (ref?x -> Ref) [] (stab -> Ref) [] tock -> Sem
+
+exports
+
+-- Refusal-testing (via refusals)
+RT(P) = C1(P ; tick -> SKIP)
+
+-- tick-tock (via refusals)
+C3(P) = C2(prioritise(P,<{},{tock}>) ; tick -> SKIP)
+
+-- tick-tock
+TT(P) = C3(P)
+
+endmodule
+---------------------------------------------------------------------------

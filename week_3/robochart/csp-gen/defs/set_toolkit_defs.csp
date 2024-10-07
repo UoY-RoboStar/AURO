@@ -1,0 +1,44 @@
+-- *************************************************************************
+-- Copyright (c) 2019 University of York and others
+--
+-- This program and the accompanying materials are made available under the
+-- terms of the Eclipse Public License 2.0 which is available at
+-- http://www.eclipse.org/legal/epl-2.0.
+--
+-- SPDX-License-Identifier: EPL-2.0
+--
+-- Contributors:
+--   Alvaro Miyazawa - initial definition
+-- *************************************************************************
+
+set_toolkit_notin(x,s) = not(member(x,s))
+
+set_toolkit_subseteq(ss,s) = let
+	aux(<>,s) = true
+	aux(<x>^xs,s) = member(x,s) and aux(xs,s)
+within 
+	aux(seq(ss), s)
+
+set_toolkit_subset(ss,s) = set_toolkit_subseteq(ss,s) and (not (ss == s))
+
+set_toolkit_symetric_diff(s1,s2) = union(diff(s1,s2),diff(s2,s1))
+
+set_toolkit_union(x,y) = union(x,y)
+set_toolkit_diff(x,y) = diff(x,y)
+set_toolkit_inter(x,y) = inter(x,y)
+set_toolkit_Union(A) = Union(A)
+set_toolkit_Inter(A) = Inter(A)
+
+pre_set_toolkit_notin(mX,s) = true
+pre_set_toolkit_subseteq(ss,s) = true
+pre_set_toolkit_subset(ss, s) = true
+pre_set_toolkit_union(s1, s2) = true
+pre_set_toolkit_inter(s1, s2) = true
+pre_set_toolkit_diff(s1, s2) = true
+pre_set_toolkit_symetric_diff(s1, s2) = true
+pre_set_toolkit_Union(A) = true
+pre_set_toolkit_Inter(A) = true
+
+
+
+
