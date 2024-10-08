@@ -24,19 +24,13 @@ datatype Vector3 {
 	z : real
 } 
 
- 
-
-
 controller Driving {
 	requires IOperations 
 	stm TurtleBot3FSMRC {
 		const lvel : real, avel : real
 		requires IOperations initial i0
 		state Forward {
-			entry 
-			// FIXME: cmd_vel ( Twist (| linear = [| lvel , 0 , 0 |] , angular = [| 0 , 0 , 0 |] |) )
-			// FIXME: Confirm with Alvaro about what happens to components that are not assigned?
-			cmd_vel ( Twist (| linear = Vector3 (| x = lvel , y = 0 , z = 0 |) , angular = Vector3 (| x = 0 , y = 0 , z = 0 |) |) )
+			entry cmd_vel ( Twist (| linear = Vector3 (| x = lvel , y = 0 , z = 0 |) , angular = Vector3 (| x = 0 , y = 0 , z = 0 |) |) )
 		}
 		transition t0 {
 			from i0
@@ -44,8 +38,7 @@ controller Driving {
 		action # C
 		}
 		state Turning {
-		//entry cmd_vel ( Twist (| linear = [| 0 , 0 , 0 |] , angular = [| 0 , 0 , avel |] |) )
-		entry cmd_vel ( Twist (| linear = Vector3 (| x = 0 , y = 0 , z = 0 |) , angular = Vector3 (| x = 0 , y = 0 , z = avel |) |) )
+			entry cmd_vel ( Twist (| linear = Vector3 (| x = 0 , y = 0 , z = 0 |) , angular = Vector3 (| x = 0 , y = 0 , z = avel |) |) )
 		}
 		transition t1 {
 			from Forward
@@ -55,7 +48,7 @@ controller Driving {
 		}
 		clock C
 
-	transition t2 {
+		transition t2 {
 			from Turning
 			to Forward
 			condition since ( C ) > 1
