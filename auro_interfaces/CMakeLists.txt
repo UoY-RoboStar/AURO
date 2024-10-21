@@ -16,6 +16,9 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/StringWithPose.msg"
+  "msg/Item.msg"
+  "msg/ItemList.msg"
+  "srv/ItemRequest.srv"
   DEPENDENCIES geometry_msgs
 )
 

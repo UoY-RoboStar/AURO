@@ -3,7 +3,7 @@
 <package format="3">
   <name>auro_interfaces</name>
   <version>0.0.0</version>
-  <description>Defines ROS interfaces useful for AURO</description>
+  <description>AURO Interfaces</description>
   <maintainer email="pedro.ribeiro@york.ac.uk">pfr500</maintainer>
   <license>EPL-2.0</license>
 
