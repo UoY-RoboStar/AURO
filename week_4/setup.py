@@ -48,7 +48,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'robot_controller = week_4.robot_controller:main'
+            'robot_controller = week_4.robot_controller:main',
+            'rc_obstacle_detector = week_4.rc_obstacle_detector:main',
+            'rc_driving = week_4.rc_driving:main',
         ],
     },
 )
