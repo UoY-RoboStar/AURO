@@ -1,7 +1,7 @@
 
 --
--- RoboChart generator version 3.0.0.202401231330
--- Automatically generated on 07-10-2024 15:03:45
+-- RoboChart generator version 3.0.0.202408051513
+-- Automatically generated on 14-10-2024 14:42:16
 --
 -- Iterated compression status: true
 -- Assertions compression status: false
@@ -34,6 +34,383 @@
 		|}
 
 		-- defined operations
+		-- compileOperationDef
+		module OP_move
+		exports
+			transparent diamond
+			transparent sbisim
+			transparent dbisim
+			transparent chase
+			
+			-- Transition identifiers
+			-- declaring identifiers of transitions
+			datatype NIDS = 
+			              NID_i0|
+			              NID_f0
+			
+			channel internal__ : NIDS
+			
+			-- Flow channels		
+			channel interrupt
+			channel exited
+			channel exit
+			channel terminate
+			
+			-- Variable channels
+			
+			-- Shared variable channels
+			
+			-- Local variable channels for defined operations that are required by the state machine
+			
+			-- Declaring state machine events
+			
+			-- Declaring call and ret events for undefined operations
+			channel cmd_velCall: myPackage_Twist
+			
+			enterSS = {|
+			i0::enter,
+			f0::enter
+			|}
+			
+			enteredSS = 	{|
+			f0::entered
+			|}
+			
+			internal_events = union(enteredSS,union(enterSS,{|interrupt,exited|}))
+			
+			shared_variable_events = {|
+			|}
+			
+			-- channel set with all visible events
+			sem__events = {|
+				terminate
+			,	cmd_velCall
+				, share__
+				|}
+			
+			-- Nodes --
+			-- declaring all nodes
+			
+			----------------------------------------------------------------------
+			-- Initial: i0
+			module i0
+			exports
+			
+				channel enter, interrupt
+				
+				D__(id__,
+							param_lvel,
+							param_avel) = 
+					dbisim(let
+						Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+						
+						Termination = terminate -> SKIP
+						
+						Active 		= share__choice(interrupt -> SKIP) ; Inactive
+					within
+						Inactive [| {terminate} |> SKIP)
+				
+				VS_O__(id__,
+							param_lvel,
+							param_avel) = D__(id__,
+							param_lvel,
+							param_avel)
+			
+			endmodule
+			----------------------------------------------------------------------
+			
+			
+			----------------------------------------------------------------------
+			-- Final state: f0
+			module f0
+			
+			exports
+			
+				channel enter, entered, interrupt
+				channel enteredL, enteredR
+				
+				--	Rule: behaviours(Node)
+				D__(id__,
+							param_lvel,
+							param_avel) = 
+					dbisim(let
+						Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Entering
+						
+						Entering 	= entered -> SKIP ; Active
+						Active		= share__choice(terminate -> SKIP [] interrupt -> SKIP) ; Interrupted
+						Interrupted	= share__choice(exit -> exited -> Inactive)
+					within
+						Inactive [| {terminate} |> SKIP)
+					
+				VS_O__(id__,
+							param_lvel,
+							param_avel) = D__(id__,
+							param_lvel,
+							param_avel)
+			
+			endmodule
+			----------------------------------------------------------------------
+			
+			-- END of Nodes --
+			
+			-- Operation calls --
+			-- Only the undefined operations are declared here.
+			-- If the state machine is in isolation, all required operations will be undefined.
+			-- If it is in the context of a controller, the required operations not provided by the
+			-- controller will be declared here, and the defined operations will be defined in the
+			-- context of the Controller module, and therefore within scope of the state machine module.
+			CALL__cmd_vel(id__,
+						param_msg) 	= cmd_velCall.param_msg -> SKIP
+			
+			-- END of Operation calls --
+			
+			-- STM processes
+			STM(id__,
+						param_lvel,
+						param_avel) = -- RULE: [[stm:OperationDef]]_STM^nops : CSPProcess
+			Stateful(id__,
+						param_lvel,
+						param_avel) \ {terminate}
+			
+			STM_VS_O(id__,
+						param_lvel,
+						param_avel) = -- RULE: [[stm:OperationDef]]_STM^nops : CSPProcess
+			Stateful(id__,
+						param_lvel,
+						param_avel) \ {terminate}
+			
+			-- Transitions
+			Transitions(id__,
+						param_lvel,
+						param_avel) = ((let
+				Trans = (
+					((share__ -> SKIP
+					 [] dbisim((true)&(internal__!NID_i0 -> SKIP ;  ((true&CALL__cmd_vel(
+					 			id__,
+					 			((param_lvel,0,0),(0,0,param_avel))
+					 		) ; f0::enter -> SKIP))))
+					 ) ; Trans)
+					 []
+					 (interrupt -> share__choice(exit -> SKIP) ; share__choice(exited -> terminate -> SKIP))
+					 []
+					 terminate -> SKIP
+				)
+			within
+				Trans
+			)
+			)
+			
+			-- Stateful
+			-- RULE: Stateful(stm:StateMachineBody) : CSPProcess
+			
+			-- Named process definitions
+			MachineBody(id__,
+						param_lvel,
+						param_avel) = 
+				dbisim((
+				let
+					finalNodesEntered = {|f0::entered|}
+				within
+					((let
+						-- IMPLEMENTATION NOTE:
+						-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+						-- modules for defining the semantics of each node.
+						enterSS = {|
+						i0::enter,
+						f0::enter
+						|}
+						hideSet = union(enterSS,{|exit,exited,internal__|})
+					within 
+						((let
+							-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+							-- because CSPM modules are used for the semantics of Node.
+							flowevts = union(enterSS,{|exit,exited,interrupt|})
+							transSync = {|internal__.NID_i0|}
+						within
+							((
+							 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+							   i0::D__(id__,
+							   			param_lvel,
+							   			param_avel)
+							   [| { share__, terminate } |] (
+							   f0::D__(id__,
+							   			param_lvel,
+							   			param_avel)
+							   )
+							 )
+							 [[f0::interrupt <- x__ | x__ <- {|interrupt|}]]
+							 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
+							 )
+							  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
+							 )
+							 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+							|}) |]
+							 ((i0::enter -> Transitions(id__,
+							 			param_lvel,
+							 			param_avel))
+							  [[ share__ <- x__ | x__ <- {| share__ |} ]]
+							 )
+							)
+							)
+						)
+						 \ hideSet)
+					)
+					 [| {| interrupt |} |] SKIP)
+				)
+				)
+			
+			Behaviour(id__,
+						param_lvel,
+						param_avel) = 
+				dbisim((MachineBody(id__,
+							param_lvel,
+							param_avel)\ enteredSS)
+				)
+			
+			
+			Stateful(id__,
+						param_lvel,
+						param_avel) = 
+				((
+					(Behaviour(id__,
+								param_lvel,
+								param_avel) [| union(getsetLocalChannels,{terminate}) |] varMemory(id__,
+								param_lvel,
+								param_avel))
+				 	\getsetLocalChannels
+				)
+				)
+			
+			
+			-- Visible counterparts
+			MachineBody_VS_O(id__,
+						param_lvel,
+						param_avel) = 
+				dbisim((
+				let
+					finalNodesEntered = {|f0::entered|}
+				within
+					((let
+						-- IMPLEMENTATION NOTE:
+						-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+						-- modules for defining the semantics of each node.
+						enterSS = {|
+						i0::enter,
+						f0::enter
+						|}
+						hideSet = union(enterSS,{|exit,exited,internal__|})
+					within 
+						((let
+							-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+							-- because CSPM modules are used for the semantics of Node.
+							flowevts = union(enterSS,{|exit,exited,interrupt|})
+							transSync = {|internal__.NID_i0|}
+						within
+							((
+							 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+							   i0::VS_O__(id__,
+							   			param_lvel,
+							   			param_avel)
+							   [| { share__, terminate } |] (
+							   f0::VS_O__(id__,
+							   			param_lvel,
+							   			param_avel)
+							   )
+							 )
+							 [[f0::interrupt <- x__ | x__ <- {|interrupt|}]]
+							 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
+							 )
+							  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
+							 )
+							 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+							|}) |]
+							 ((i0::enter -> Transitions(id__,
+							 			param_lvel,
+							 			param_avel))
+							  [[ share__ <- x__ | x__ <- {| share__ |} ]]
+							 )
+							)
+							)
+						)
+						 \ hideSet)
+					)
+					 [| {| interrupt |} |] SKIP)
+				)
+				)
+			
+			Behaviour_VS_O(id__,
+						param_lvel,
+						param_avel) = 
+				dbisim((MachineBody_VS_O(id__,
+							param_lvel,
+							param_avel))
+				)
+			
+			
+			Stateful_VS_O(id__,
+						param_lvel,
+						param_avel) = 
+				dbisim((
+					(Behaviour_VS_O(id__,
+								param_lvel,
+								param_avel) [| union(getsetLocalChannels,{terminate}) |] varMemory(id__,
+								param_lvel,
+								param_avel))
+				 	\getsetLocalChannels
+				)
+				)
+			
+			
+			-- END
+			
+			-- Memory
+			-- Memory variables
+			
+			-- varMemory process
+			varMemory(id__,
+						param_lvel,
+						param_avel) = terminate -> SKIP
+			
+			getsetLocalChannels = {||}
+			
+			-- Definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
+			FVS__(id__,
+						param_lvel,
+						param_avel) = STM_VS_O(id__,
+						param_lvel,
+						param_avel)
+			
+			D__(id__,
+						param_lvel,
+						param_avel) = STM(id__,
+						param_lvel,
+						param_avel) \ internal_events
+			O__(id__,
+						param_lvel,
+						param_avel) = sbisim(diamond(D__(id__,
+						param_lvel,
+						param_avel)))
+			VS__(id__,
+						param_lvel,
+						param_avel) = FVS__(id__,
+						param_lvel,
+						param_avel)
+			VS_O__(id__,
+						param_lvel,
+						param_avel) = sbisim(diamond(FVS__(id__,
+						param_lvel,
+						param_avel)))
+			HEXT__(id__,
+						param_lvel,
+						param_avel) = O__(id__,
+						param_lvel,
+						param_avel) [|shared_variable_events|] SKIP
+			HUP__(id__,
+						param_lvel,
+						param_avel) = O__(id__,
+						param_lvel,
+						param_avel) [|{share__}|] SKIP
+					endmodule
 	
 		-- declaring machines
 		module TurtleBot3FSMRC
@@ -160,11 +537,12 @@
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&CALL__cmd_vel(
+					Active 		= true&CALL__move(
 								id__,
 							    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
 							    const_myPackage_Driving_TurtleBot3FSMRC_avel,
-								((const_myPackage_Driving_TurtleBot3FSMRC_lvel,0,0),(0,0,0))
+								const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+								0
 							) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
@@ -183,11 +561,12 @@
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&CALL__cmd_vel(
+					Active 		= true&CALL__move(
 								id__,
 							    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
 							    const_myPackage_Driving_TurtleBot3FSMRC_avel,
-								((const_myPackage_Driving_TurtleBot3FSMRC_lvel,0,0),(0,0,0))
+								const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+								0
 							) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
@@ -240,11 +619,12 @@
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&CALL__cmd_vel(
+					Active 		= true&CALL__move(
 								id__,
 							    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
 							    const_myPackage_Driving_TurtleBot3FSMRC_avel,
-								((0,0,0),(0,0,const_myPackage_Driving_TurtleBot3FSMRC_avel))
+								0,
+								const_myPackage_Driving_TurtleBot3FSMRC_avel
 							) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
@@ -263,11 +643,12 @@
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&CALL__cmd_vel(
+					Active 		= true&CALL__move(
 								id__,
 							    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
 							    const_myPackage_Driving_TurtleBot3FSMRC_avel,
-								((0,0,0),(0,0,const_myPackage_Driving_TurtleBot3FSMRC_avel))
+								0,
+								const_myPackage_Driving_TurtleBot3FSMRC_avel
 							) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
@@ -295,6 +676,16 @@
 					    const_myPackage_Driving_TurtleBot3FSMRC_avel,
 						param_msg) 	= cmd_velCall.param_msg -> SKIP
 			
+			CALL__move(id__,
+					    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+					    const_myPackage_Driving_TurtleBot3FSMRC_avel,
+						param_lvel,
+						param_avel) = (OP_move::O__(id__,
+						param_lvel,
+						param_avel))
+			[[
+				OP_move::cmd_velCall <- cmd_velCall
+			]]
 			-- END of Operation calls --
 			
 			-- STM processes

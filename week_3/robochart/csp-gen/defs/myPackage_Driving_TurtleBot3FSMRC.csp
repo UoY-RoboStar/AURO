@@ -1,7 +1,7 @@
 
 --
--- RoboChart generator version 3.0.0.202401231330
--- Automatically generated on 07-10-2024 15:03:45
+-- RoboChart generator version 3.0.0.202408051513
+-- Automatically generated on 14-10-2024 14:42:16
 --
 -- Iterated compression status: true
 -- Assertions compression status: false
@@ -38,6 +38,7 @@ exports
 	-- Declaring state machine events
 	
 	-- Declaring call and ret events for undefined operations
+	channel moveCall: core_real.core_real
 	channel cmd_velCall: myPackage_Twist
 	
 	enterSS = {|
@@ -59,7 +60,8 @@ exports
 	-- channel set with all visible events
 	sem__events = {|
 		terminate
-	,	cmd_velCall
+	,	moveCall,
+		cmd_velCall
 		|}
 
 	-- Nodes --
@@ -131,11 +133,12 @@ exports
 			
 			Termination = terminate -> SKIP
 			
-			Active 		= true&CALL__cmd_vel(
+			Active 		= true&CALL__move(
 						id__,
 					    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
 					    const_myPackage_Driving_TurtleBot3FSMRC_avel,
-						((const_myPackage_Driving_TurtleBot3FSMRC_lvel,0,0),(0,0,0))
+						const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+						0
 					) ; 
 					 	  Behaviour ; 
 					 	  share__choice(exit -> SKIP) ; SKIP ; 
@@ -154,11 +157,12 @@ exports
 			
 			Termination = terminate -> SKIP
 			
-			Active 		= true&CALL__cmd_vel(
+			Active 		= true&CALL__move(
 						id__,
 					    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
 					    const_myPackage_Driving_TurtleBot3FSMRC_avel,
-						((const_myPackage_Driving_TurtleBot3FSMRC_lvel,0,0),(0,0,0))
+						const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+						0
 					) ; 
 					 	  Behaviour ; 
 					 	  share__choice(exit -> SKIP) ; SKIP ; 
@@ -211,11 +215,12 @@ exports
 			
 			Termination = terminate -> SKIP
 			
-			Active 		= true&CALL__cmd_vel(
+			Active 		= true&CALL__move(
 						id__,
 					    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
 					    const_myPackage_Driving_TurtleBot3FSMRC_avel,
-						((0,0,0),(0,0,const_myPackage_Driving_TurtleBot3FSMRC_avel))
+						0,
+						const_myPackage_Driving_TurtleBot3FSMRC_avel
 					) ; 
 					 	  Behaviour ; 
 					 	  share__choice(exit -> SKIP) ; SKIP ; 
@@ -234,11 +239,12 @@ exports
 			
 			Termination = terminate -> SKIP
 			
-			Active 		= true&CALL__cmd_vel(
+			Active 		= true&CALL__move(
 						id__,
 					    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
 					    const_myPackage_Driving_TurtleBot3FSMRC_avel,
-						((0,0,0),(0,0,const_myPackage_Driving_TurtleBot3FSMRC_avel))
+						0,
+						const_myPackage_Driving_TurtleBot3FSMRC_avel
 					) ; 
 					 	  Behaviour ; 
 					 	  share__choice(exit -> SKIP) ; SKIP ; 
@@ -261,6 +267,11 @@ exports
 	-- If it is in the context of a controller, the required operations not provided by the
 	-- controller will be declared here, and the defined operations will be defined in the
 	-- context of the Controller module, and therefore within scope of the state machine module.
+	CALL__move(id__,
+			    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
+			    const_myPackage_Driving_TurtleBot3FSMRC_avel,
+				param_lvel,
+				param_avel) 	= moveCall.param_lvel.param_avel -> SKIP
 	CALL__cmd_vel(id__,
 			    const_myPackage_Driving_TurtleBot3FSMRC_lvel,
 			    const_myPackage_Driving_TurtleBot3FSMRC_avel,

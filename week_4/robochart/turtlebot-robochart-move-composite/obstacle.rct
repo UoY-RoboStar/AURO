@@ -1,0 +1,57 @@
+import sequence_toolkit::* 
+import set_toolkit::* 
+import relation_toolkit::*
+
+datatype DirectionTrigger { left : boolean right : boolean front : boolean back : boolean } controller ObstacleDetector {
+	uses IEvents uses IObstacle stm DetectorFSM {
+		uses IEvents uses IObstacle var data : Seq( real )
+		var dir : DirectionTrigger
+		const SCAN_THRESHOLD : real
+		initial i0
+		state Idle {
+		}
+		junction j0
+
+		transition t0 {
+			from i0
+			to Idle
+		}
+		transition t1 {
+			from Idle
+			to j0
+			trigger scan ? data
+			action dir = DirectionTrigger 
+				(| front = min ( ran(extract ( union ( [ 331 , 359 ] , [ 0 , 30 ] ) , data ) ) ) < SCAN_THRESHOLD ,
+					left = min ( ran(extract ( [ 31 , 90 ] , data ) ) ) < SCAN_THRESHOLD , 
+					back = min ( ran(extract ( [ 91 , 270 ] , data ) ) ) < SCAN_THRESHOLD , 
+					right = min ( ran(extract ( [ 271 , 330 ] , data ) ) ) < SCAN_THRESHOLD
+				|)
+		}
+		transition t2 {
+			from j0
+			to Idle
+			condition dir . front
+			action obstacle ! Direction :: front
+		}
+		transition t4 {
+			from j0
+			to Idle
+			condition dir . left
+			action obstacle ! Direction :: left
+		}
+		transition t3 {
+			from j0
+			to Idle
+			condition dir . right
+			action obstacle ! Direction :: right
+		}
+	}
+
+	connection ObstacleDetector on scan to DetectorFSM on scan
+	connection DetectorFSM on obstacle to ObstacleDetector on obstacle
+}
+
+function lt ( v : real , c : real ) : boolean {
+	postcondition result == v < c
+} 
+

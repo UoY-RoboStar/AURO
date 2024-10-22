@@ -1,0 +1,127 @@
+
+interface IOperations {
+	cmd_vel (  msg : Twist )
+}
+
+interface IEvents {
+	event scan : Seq( real )
+}
+
+interface IMove {
+	move ( lvel : real , avel : real )
+}
+
+interface IObstacle {
+	event obstacle : Direction
+}
+
+robotic platform TurtleBot {
+	uses IEvents 
+	provides IOperations 
+}
+
+datatype Twist { 
+	linear : Vector3
+	angular : Vector3
+} 
+
+datatype Vector3 { 
+	x : real 
+	y : real 
+	z : real
+} enumeration Direction { left right front } 
+
+controller Driving {
+	requires IOperations 
+	stm TurtleBot3FSMRC {
+		const lvel : real , avel : real , PI : real
+		requires IOperations state Driving {
+			initial i0
+			state Turning {
+				entry move ( 0 , avel )
+			}
+			state Forward {
+				entry move ( lvel , 0 )
+			}
+			transition t2 {
+				from Turning
+				to Forward
+				condition since ( C ) > 1
+				action # C
+			}
+			transition t0 {
+				from i0
+				to Forward
+				action # C
+			}
+			transition t1 {
+				from Forward
+				to Turning
+				condition since ( C ) >= 4
+				action # C
+			}
+		}
+		initial i0
+
+		transition t0 {
+			from i0
+			to Driving
+		}
+		junction j0
+
+		transition t1 {
+			from Driving
+			to j0
+			trigger obstacle ? obs
+			action # C
+		}
+		clock C
+
+		transition t2 {
+			from j0
+			to Rotating
+			condition obs == Direction :: left \/ obs == Direction :: front
+			action move ( 0 , avel )
+		}
+	requires IMove uses IObstacle var obs : Direction
+		state Rotating {
+		}
+		transition t3 {
+			from j0
+			to Rotating
+			condition obs == Direction :: right \/ obs == Direction :: front
+			action move ( 0 , - avel )
+		}
+		transition t4 {
+			from Rotating
+			to Driving
+			condition since ( C ) >= PI / ( 2 * avel )
+		}
+	}
+
+	uses IObstacle
+
+	opref op_ref0 = move
+connection Driving on obstacle to TurtleBot3FSMRC on obstacle
+}
+
+module Module {
+	rref rp_ref0 = TurtleBot
+	cref ctrl_ref0 = Driving
+connection rp_ref0 on scan to ctrl_ref1 on scan ( _async )
+	connection ctrl_ref1 on obstacle to ctrl_ref0 on obstacle
+	cref ctrl_ref1 = ObstacleDetector
+}
+
+operation move ( lvel : real
+, avel : real
+) {
+	requires IOperations initial i0
+	final f0
+	transition t0 {
+		from i0
+		to f0
+		action cmd_vel ( Twist (| linear = Vector3 (| x = lvel , y = 0 , z = 0 |) , angular = Vector3 (| x = 0 , y = 0 , z = avel |) |) )
+	}
+}
+

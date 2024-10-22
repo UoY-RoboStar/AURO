@@ -8,7 +8,7 @@
 
 -- generate nat
 nametype core_nat = union({0..2},{calc_type_min(Union(
-			{}))..calc_type_max(Union({}))})
+			{{0},{0}}))..calc_type_max(Union({{0},{0}}))})
 
 -- generate const_myPackage_Driving_TurtleBot3FSMRC_avel
 const_myPackage_Driving_TurtleBot3FSMRC_avel = 0
@@ -27,7 +27,7 @@ nametype core_string = LSeq(Char,2)
 
 -- generate real
 nametype core_real = union({ -2..2},{calc_type_min(Union(
-			{{ -2..2},{ -2..2}}))..calc_type_max(Union({{ -2..2},{ -2..2}}))}) 
+			{{ -2..2},{ -2..2},{ -2..2},{ -2..2},{ -2..2},{ -2..2},{avel|avel <- { -2..2}},{lvel|lvel <- { -2..2}},{0},{0}}))..calc_type_max(Union({{ -2..2},{ -2..2},{ -2..2},{ -2..2},{ -2..2},{ -2..2},{avel|avel <- { -2..2}},{lvel|lvel <- { -2..2}},{0},{0}}))}) 
 
 -- VECTOR TYPES AND OPERATIONS
 
@@ -36,7 +36,7 @@ nametype core_real = union({ -2..2},{calc_type_min(Union(
 
 -- generate int
 nametype core_int = union({ -2..2},{calc_type_min(Union(
-			{}))..calc_type_max(Union({}))})
+			{{0},{0}}))..calc_type_max(Union({{0},{0}}))})
 
 -- generate const_Driving_stm0_lvel
 const_Driving_stm0_lvel = 0

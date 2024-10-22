@@ -1,7 +1,7 @@
 
 --
--- RoboChart generator version 3.0.0.202401231330
--- Automatically generated on 07-10-2024 15:03:45
+-- RoboChart generator version 3.0.0.202408051513
+-- Automatically generated on 14-10-2024 14:42:16
 --
 -- Iterated compression status: true
 -- Assertions compression status: false
@@ -10,6 +10,23 @@
 include "myPackage.csp"
 
 
+-- generate myPackage_OP_move
+P_myPackage_OP_move = let
+	id__ = 0
+	
+	param_lvel = 0
+	param_avel = 0
+	
+	
+	
+within
+	myPackage::OP_move::O__(id__,
+				param_lvel,
+				param_avel)
+assert P_myPackage_OP_move :[deadlock-free]	
+assert P_myPackage_OP_move;RUN({r__}) :[deadlock-free]
+assert P_myPackage_OP_move :[deterministic]
+assert P_myPackage_OP_move :[divergence-free]
 
 -- generate myPackage_Driving
 P_myPackage_Driving = let
