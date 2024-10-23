@@ -25,6 +25,7 @@ from geometry_msgs.msg import Twist, Pose
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import LaserScan
 from auro_interfaces.msg import StringWithPose, Item, ItemList
+from auro_interfaces.srv import ItemRequest
 
 from tf_transformations import euler_from_quaternion
 import angles
@@ -69,6 +70,9 @@ class RobotController(Node):
         self.goal_distance = random.uniform(1.0, 2.0) # Goal distance to travel in FORWARD state
         self.scan_triggered = [False] * 4 # Boolean value for each of the 4 LiDAR sensor sectors. True if obstacle detected within SCAN_THRESHOLD
         self.items = ItemList()
+
+        pick_up_service = node.create_client(ItemRequest, '/pick_up_item')
+        offload_service = node.create_client(ItemRequest, '/offload_item')
 
         self.item_subscriber = self.create_subscription(
             ItemList,
@@ -276,6 +280,20 @@ class RobotController(Node):
                 item = self.items.data[0]
 
                 estimated_distance = 69.0 * float(item.diameter) ** -0.89
+
+                if estimated_distance < 0.25:
+                    rqt = ItemRequest.Request()
+                    rqt.robot_id = 'robot1'
+                    try:
+                        future = self.pick_up_service.call_async(rqt)
+                        rclpy.spin_until_future_complete(self.node, future)
+                        response = future.result()
+                        if response.success:
+                            self.get_logger().info('Item picked up.')
+                        else:
+                            self.get_logger().info('Unable to pick up item: ' + response.message)
+                    except Exception as e:
+                        self.get_logger().info('Exception ' + e)   
 
                 msg = Twist()
                 msg.linear.x = 0.25 * estimated_distance

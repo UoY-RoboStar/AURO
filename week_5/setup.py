@@ -48,6 +48,7 @@ setup(
             'teleop_keyboard = week_5.teleop_keyboard:main',
             'item_spawner = week_5.item_spawner:main',
             'item_detector = week_5.item_detector:main',
+            'robot_controller = week_5.robot_controller:main'
         ],
     },
 )
