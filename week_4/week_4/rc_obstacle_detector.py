@@ -34,12 +34,6 @@ from enum import Enum
 import random
 import math
 
-LINEAR_VELOCITY  = 0.3 # Metres per second
-ANGULAR_VELOCITY = 0.5 # Radians per second
-
-TURN_LEFT = 1 # Postive angular velocity turns left
-TURN_RIGHT = -1 # Negative angular velocity turns right
-
 SCAN_THRESHOLD = 0.4 # Metres per second
  # Array indexes for sensor sectors
 SCAN_FRONT = 0
