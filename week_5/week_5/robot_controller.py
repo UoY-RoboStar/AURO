@@ -17,8 +17,9 @@ import sys
 import rclpy
 from rclpy.node import Node
 from rclpy.signals import SignalHandlerOptions
-from rclpy.executors import ExternalShutdownException
+from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
 from rclpy.qos import QoSPresetProfiles
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 
 from std_msgs.msg import Float32
 from geometry_msgs.msg import Twist, Pose
@@ -71,14 +72,21 @@ class RobotController(Node):
         self.scan_triggered = [False] * 4 # Boolean value for each of the 4 LiDAR sensor sectors. True if obstacle detected within SCAN_THRESHOLD
         self.items = ItemList()
 
-        pick_up_service = node.create_client(ItemRequest, '/pick_up_item')
-        offload_service = node.create_client(ItemRequest, '/offload_item')
+        # Here we use two callback groups, to ensure that those in 'client_callback_group' can be executed
+        # independently from those in 'timer_callback_group'. This allos calling the services below within
+        # a callback handled by the timer_callback_group. See https://docs.ros.org/en/humble/How-To-Guides/Using-callback-groups.html
+        # for a detailed discussion on the ROS executors and callback groups.
+        client_callback_group = MutuallyExclusiveCallbackGroup()
+        timer_callback_group = MutuallyExclusiveCallbackGroup()
+
+        self.pick_up_service = self.create_client(ItemRequest, '/pick_up_item', callback_group=client_callback_group)
+        self.offload_service = self.create_client(ItemRequest, '/offload_item', callback_group=client_callback_group)
 
         self.item_subscriber = self.create_subscription(
             ItemList,
             '/items',
             self.item_callback,
-            10
+            10, callback_group=timer_callback_group
         )
 
         # Subscribes to Odometry messages published on /odom topic
@@ -95,7 +103,7 @@ class RobotController(Node):
             Odometry,
             '/odom',
             self.odom_callback,
-            10)
+            10, callback_group=timer_callback_group)
         
         # Subscribes to LaserScan messages on the /scan topic
         # http://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/LaserScan.html
@@ -108,7 +116,7 @@ class RobotController(Node):
             LaserScan,
             '/scan',
             self.scan_callback,
-            QoSPresetProfiles.SENSOR_DATA.value)
+            QoSPresetProfiles.SENSOR_DATA.value, callback_group=timer_callback_group)
 
         # Publishes Twist messages (linear and angular velocities) on the /cmd_vel topic
         # http://docs.ros.org/en/noetic/api/geometry_msgs/html/msg/Twist.html
@@ -117,7 +125,7 @@ class RobotController(Node):
         # https://github.com/ros-simulation/gazebo_ros_pkgs/blob/ros2/gazebo_plugins/src/gazebo_ros_diff_drive.cpp#L537-L555
         self.cmd_vel_publisher = self.create_publisher(Twist, '/cmd_vel', 10)
 
-        self.orientation_publisher = self.create_publisher(Float32, '/orientation', 10)
+        #self.orientation_publisher = self.create_publisher(Float32, '/orientation', 10)
 
         # Publishes custom StringWithPose (see auro_interfaces/msg/StringWithPose.msg) messages on the /marker_input topic
         # The week3/rviz_text_marker node subscribes to these messages, and ouputs a Marker message on the /marker_output topic
@@ -126,11 +134,11 @@ class RobotController(Node):
         #
         # http://docs.ros.org/en/noetic/api/visualization_msgs/html/msg/Marker.html
         # http://wiki.ros.org/rviz/DisplayTypes/Marker
-        self.marker_publisher = self.create_publisher(StringWithPose, '/marker_input', 10)
+        self.marker_publisher = self.create_publisher(StringWithPose, '/marker_input', 10, callback_group=timer_callback_group)
 
         # Creates a timer that calls the control_loop method repeatedly - each loop represents single iteration of the FSM
         self.timer_period = 0.1 # 100 milliseconds = 10 Hz
-        self.timer = self.create_timer(self.timer_period, self.control_loop)
+        self.timer = self.create_timer(self.timer_period, self.control_loop, callback_group=timer_callback_group)
 
     def item_callback(self, msg):
         self.items = msg
@@ -157,12 +165,7 @@ class RobotController(Node):
                                                     self.pose.orientation.w])
         
         
-        orientation = Float32()
-        orientation.data = yaw
-        normalised = angles.normalize_angle(yaw - self.yaw)
-        self.get_logger().info(f"Publishing diff yaw normalised: {normalised:.3f}")
         self.yaw = yaw # Store the yaw in a class variable
-        self.orientation_publisher.publish(orientation)
 
     # Called every time scan_subscriber recieves a LaserScan message from the /scan topic
     #
@@ -199,7 +202,7 @@ class RobotController(Node):
         marker_input.pose = self.pose # Set the pose of the RViz marker to track the robot's pose
         self.marker_publisher.publish(marker_input)
 
-        # self.get_logger().info(f"{self.state}")
+        #self.get_logger().info(f"{self.state}")
         
         match self.state:
 
@@ -252,6 +255,8 @@ class RobotController(Node):
 
             case State.TURNING:
 
+                self.get_logger().info("Turning state")
+
                 if len(self.items.data) > 0:
                     self.state = State.COLLECTING
                     return
@@ -279,17 +284,22 @@ class RobotController(Node):
                 
                 item = self.items.data[0]
 
-                estimated_distance = 69.0 * float(item.diameter) ** -0.89
+                # Obtained by curve fitting from experimental runs.
+                estimated_distance = 32.4 * float(item.diameter) ** -0.75 #69.0 * float(item.diameter) ** -0.89
 
-                if estimated_distance < 0.25:
+                self.get_logger().info(f'Estimated distance {estimated_distance}')
+
+                if estimated_distance <= 0.35:
                     rqt = ItemRequest.Request()
                     rqt.robot_id = 'robot1'
                     try:
                         future = self.pick_up_service.call_async(rqt)
-                        rclpy.spin_until_future_complete(self.node, future)
+                        self.executor.spin_until_future_complete(future)
                         response = future.result()
                         if response.success:
                             self.get_logger().info('Item picked up.')
+                            self.state = State.FORWARD
+                            self.items.data = []
                         else:
                             self.get_logger().info('Unable to pick up item: ' + response.message)
                     except Exception as e:
@@ -298,13 +308,11 @@ class RobotController(Node):
                 msg = Twist()
                 msg.linear.x = 0.25 * estimated_distance
                 msg.angular.z = item.x / 320.0
-
                 self.cmd_vel_publisher.publish(msg)
 
             case _:
                 pass
         
-
     def destroy_node(self):
         msg = Twist()
         self.cmd_vel_publisher.publish(msg)
@@ -322,7 +330,7 @@ def main(args=None):
     executor.add_node(node)
 
     try:
-        rclpy.spin(node)
+        executor.spin()
     except KeyboardInterrupt:
         pass
     except ExternalShutdownException:
