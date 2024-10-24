@@ -57,8 +57,9 @@ controller Driving {
 			transition t1 {
 				from Forward
 				to Turning
-				condition since ( C ) >= 4
-				action # C
+				condition since ( C ) > 5
+				action 
+			# C
 			}
 		}
 		initial i0
@@ -81,7 +82,7 @@ controller Driving {
 			from j0
 			to Rotating
 			condition obs == Direction :: left \/ obs == Direction :: front
-			action move ( 0 , avel )
+			action move ( 0 , - avel )
 		}
 	requires IMove uses IObstacle var obs : Direction
 		state Rotating {
@@ -90,12 +91,12 @@ controller Driving {
 			from j0
 			to Rotating
 			condition obs == Direction :: right \/ obs == Direction :: front
-			action move ( 0 , - avel )
+			action move ( 0 , avel )
 		}
 		transition t4 {
 			from Rotating
 			to Driving
-			condition since ( C ) >= PI / ( 2 * avel )
+			condition since ( C ) >= PI / ( 5 * avel )
 		}
 	}
 
