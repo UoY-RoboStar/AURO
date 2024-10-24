@@ -74,7 +74,7 @@ class ItemDetector(Node):
 
         item_list = ItemList()
 
-        self.get_logger().info('Received camera image')
+        #self.get_logger().info('Received camera image')
 
         frame = self.br.imgmsg_to_cv2(data, "bgr8")
         # cv2.imshow("/camera/image_raw", frame)
@@ -160,7 +160,7 @@ class ItemDetector(Node):
                     cv2.circle(contours_frame, (centre_x, centre_y), 6, white, -1, lineType=cv2.LINE_AA)
 
         self.item_publisher.publish(item_list)
-        self.get_logger().info(f"Publishing: {item_list}")
+        #self.get_logger().info(f"Publishing: {item_list}")
 
         cv2.imshow("Contours", contours_frame)
 

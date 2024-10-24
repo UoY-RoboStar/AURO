@@ -93,6 +93,10 @@ class ItemSpawner(Node):
 
 
     def spawn_item(self):
+
+        while not self.spawn_entity_client.wait_for_service():
+            pass
+
         request = SpawnEntity.Request()
         request.name = "item"
         request.xml = self.item_model
@@ -124,7 +128,7 @@ class ItemSpawner(Node):
         request = SetEntityState.Request()
         request.state = state
 
-        self.get_logger().info("Setting entity state")
+        #self.get_logger().info("Setting entity state")
         return self.set_entity_state_client.call(request)
     
     def pick_up_item(self, request, response):
@@ -133,7 +137,7 @@ class ItemSpawner(Node):
         The 'success' field of response is set to True if pick up succeeded, and otherwise
         is set to False. The 'message' field provides further details.
         '''
-        DISTANCE = 0.25
+        DISTANCE = 0.35
 
         response.success = False
         self.get_logger().info(f"Incoming request on pick_up_item from robot_id '{request.robot_id}'")
@@ -154,7 +158,7 @@ class ItemSpawner(Node):
                 distance = math.sqrt((robot_position.x - item_position.x) ** 2 +
                                     (robot_position.y - item_position.y) ** 2)
 
-                if distance < DISTANCE: # Approximate radius of item for collection.
+                if distance <= DISTANCE: # Approximate radius of item for collection.
                     self.get_logger().info("Collected item")
                     pose = Pose()
                     pose.position.x = robot_position.x
@@ -168,8 +172,8 @@ class ItemSpawner(Node):
                     response.message = f"Robot '{request.robot_id}' collected item successfully"
                     return response
             
-            response.success = False
-            response.message = f"Robot '{request.robot_id}' unable to pick any item."
+                response.success = False
+                response.message = f"Robot '{request.robot_id}' unable to pick any item at distance {distance}."
                     
         return response
     
