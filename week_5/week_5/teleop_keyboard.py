@@ -141,18 +141,19 @@ def check_angular_limit_velocity(velocity):
         return constrain(velocity, -WAFFLE_MAX_ANG_VEL, WAFFLE_MAX_ANG_VEL)
 
 
-def main():
+def main(args=sys.argv):
     settings = None
     if os.name != 'nt':
         settings = termios.tcgetattr(sys.stdin)
 
-    rclpy.init()
+    rclpy.init(args=args)
 
     qos = QoSProfile(depth=10)
     node = rclpy.create_node('teleop_keyboard')
     pub = node.create_publisher(Twist, 'cmd_vel', qos)
+    robot_id_param = node.declare_parameter('robot_id', 'robot1')
+    robot_id = node.get_parameter('robot_id').value
 
-    robot_id = 'robot1'
     pick_up_service = node.create_client(ItemRequest, '/pick_up_item')
     offload_service = node.create_client(ItemRequest, '/offload_item')
 
