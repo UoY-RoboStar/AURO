@@ -1,0 +1,35 @@
+1:
+  robot1:
+    window_x: 0
+    window_y: 720
+    window_width: 1280
+    window_height: 680
+
+2:
+  robot1:
+    window_x: 0
+    window_y: 720
+    window_width: 1280
+    window_height: 680
+  robot2:
+    window_x: 1280
+    window_y: 720
+    window_width: 1280
+    window_height: 680
+
+3:
+  robot1:
+    window_x: 0
+    window_y: 720
+    window_width: 1280
+    window_height: 680
+  robot2:
+    window_x: 1280
+    window_y: 720
+    window_width: 1280
+    window_height: 680
+  robot3:
+    window_x: 1280
+    window_y: 0
+    window_width: 1280
+    window_height: 680

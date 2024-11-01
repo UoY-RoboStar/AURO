@@ -1,0 +1,297 @@
+material white
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1
+      diffuse 1 1 1
+    }
+  }
+}
+
+material black
+{
+  technique
+  {
+    pass
+    {
+      ambient 0 0 0
+      diffuse 0 0 0
+    }
+  }
+}
+
+material grey
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.5 0.5 0.5
+      diffuse 0.5 0.5 0.5
+    }
+  }
+}
+
+material red
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 0 0
+      diffuse 1 0 0
+    }
+  }
+}
+
+material green
+{
+  technique
+  {
+    pass
+    {
+      ambient 0 1 0
+      diffuse 0 1 0
+    }
+  }
+}
+
+material blue
+{
+  technique
+  {
+    pass
+    {
+      ambient 0 0 1
+      diffuse 0 0 1
+    }
+  }
+}
+
+material cyan
+{
+  technique
+  {
+    pass
+    {
+      ambient 0 1 1
+      diffuse 0 1 1
+    }
+  }
+}
+
+material magenta
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 0 1
+      diffuse 1 0 1
+    }
+  }
+}
+
+material purple
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.26 0 1
+      diffuse 0.26 0 1
+    }
+  }
+}
+
+material pink
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 0.75 0.8
+      diffuse 1 0.75 0.8
+    }
+  }
+}
+
+material seagreen 
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.18 0.55 0.34
+      diffuse 0.18 0.55 0.34
+    }
+  }
+}
+
+material orangered
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 0.27 0
+      diffuse 1 0.27 0
+    }
+  }
+}
+
+material deeppink
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 0.08 0.58
+      diffuse 1 0.08 0.58
+    }
+  }
+}
+
+material yellow
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 0
+      diffuse 1 1 0
+    }
+  }
+}
+
+vertex_program outline_vertex_shader glsl
+{
+  source outline_vertex_shader.glsl
+
+  default_params
+  {
+    param_named scale float 0.1
+  }
+}
+
+fragment_program outline_fragment_shader glsl
+{
+  source outline_fragment_shader.glsl
+
+  default_params
+  {
+    param_named colour float4 1 1 0 1
+  }
+}
+
+abstract pass outline
+{
+  scene_blend alpha_blend
+  cull_hardware none
+  cull_software none
+  depth_write off
+  depth_check on
+
+  vertex_program_ref outline_vertex_shader
+  {
+    param_named scale float $scale
+  }
+  fragment_program_ref outline_fragment_shader
+  {
+    param_named colour float4 $colour
+  }
+}
+
+abstract pass colour
+{
+  vertex_program_ref outline_vertex_shader
+  {
+    param_named scale float 0.0
+  }
+  fragment_program_ref outline_fragment_shader
+  {
+    param_named colour float4 $colour
+  }
+}
+
+material red_outlined
+{
+  technique
+  {
+    pass: outline
+    {
+      set $scale 0.1
+      set $colour "1 1 0 1"
+    }
+    pass: colour
+    {
+      set $colour "1 0 0 1"
+    }
+  }
+}
+
+material green_outlined
+{
+  technique
+  {
+    pass: outline
+    {
+      set $scale 0.1
+      set $colour "1 1 0 1"
+    }
+    pass: colour
+    {
+      set $colour "0 1 0 1"
+    }
+  }
+}
+
+material blue_outlined
+{
+  technique
+  {
+    pass: outline
+    {
+      set $scale 0.1
+      set $colour "1 1 0 1"
+    }
+    pass: colour
+    {
+      set $colour "0 0 1 1"
+    }
+  }
+}
+
+material magenta_outlined
+{
+  technique
+  {
+    pass: outline
+    {
+      set $scale 0.01
+      set $colour "1 1 0 1"
+    }
+    pass: colour
+    {
+      set $colour "1 0 1 1"
+    }
+  }
+}
+
+material grey_outlined
+{
+  technique
+  {
+    pass: outline
+    {
+      set $scale 0.01
+      set $colour "1 1 0 1"
+    }
+    pass: colour
+    {
+      set $colour "0.5 0.5 0.5 1"
+    }
+  }
+}

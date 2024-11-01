@@ -1,0 +1,47 @@
+# This file can be modified to change the initial position of the robots.
+#
+# To use it, you can launch assessment_launcy.py by passing the name of the package 
+# as an argument intitial_pose_package:='solution'. This will make assessment_launch.py
+# pick up the file 'initial_poses.yaml' in the folder 'config' of package 'solution',
+# rather than the 'initial_poses.yaml' from 'assessment/config/initial_poses.yaml'.
+#
+# The following options, 1 to 3, are controlled by the argument num_robots, passed
+# to 'assessment_launch.py'.
+#
+# Multiple yaml files may be defined and used with the 'assessment_launch.py' file
+# by changing the launch parameter 'initial_pose_file', eg.:
+#
+# ros2 launch assessment assessment_launch.py initial_pose_package:='solution' inital_pose_file:='config/initial_poses.yaml' num_robots:=3
+
+# One robot
+1:
+  robot1:
+    x:  -3.5
+    y:   0.0
+    yaw: 0.0
+
+# Two robots
+2:
+  robot1:
+    x:  -3.5
+    y:   1.0
+    yaw: 0.0
+  robot2:
+    x:  -3.5
+    y:  -1.0
+    yaw: 0.0
+
+# Three robots
+3:
+  robot1:
+    x:  -3.5
+    y:   2.0
+    yaw: 0.0
+  robot2:
+    x:  -3.5
+    y:   0.0
+    yaw: 0.0
+  robot3:
+    x:  -3.5
+    y:  -2.0
+    yaw: 0.0
