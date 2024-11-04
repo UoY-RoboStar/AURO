@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="item">
+    <link name="link">
+      <gravity>false</gravity>
+      <visual name="visual">
+        <pose>0 0 0.1 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.075</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://media/materials/scripts/assessment_materials.material</uri>
+            <name>red_outlined</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

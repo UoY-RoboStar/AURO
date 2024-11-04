@@ -1,0 +1,150 @@
+<!-- Based on https://github.com/ROBOTIS-GIT/turtlebot3_simulations/blob/humble-devel/turtlebot3_gazebo/models/turtlebot3_dqn_world/model.sdf -->
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name='arena'>
+    <pose frame=''>0 0 0 0 0 0</pose>
+    <link name='south_wall'>
+      <collision name='south_wall_collision'>
+        <geometry>
+          <box>
+            <size>6 0.15 0.5</size>
+          </box>
+        </geometry>
+        <pose frame=''>0 0 0.25 0 -0 0</pose>
+      </collision>
+      <visual name='south_wall_visual_lhs'>
+        <pose frame=''>2.5 0 0.25 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>1 0.15 0.5</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://media/materials/scripts/assessment_materials.material</uri>
+            <name>cyan</name>
+          </script>
+        </material>
+      </visual>
+      <visual name='south_wall_visual_rhs'>
+        <pose frame=''>-2.5 0 0.25 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>1 0.15 0.5</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://media/materials/scripts/assessment_materials.material</uri>
+            <name>cyan</name>
+          </script>
+        </material>
+      </visual>
+      <visual name='south_wall_visual_centre'>
+        <pose frame=''>0 0 0.25 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>4 0.15 0.5</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://media/materials/scripts/assessment_materials.material</uri>
+            <name>yellow</name>
+          </script>
+        </material>
+      </visual>
+      <pose frame=''>-4.05 0 0 0 -0 1.5708</pose>
+    </link>
+    <link name='west_wall'>
+      <collision name='west_wall_collision'>
+        <geometry>
+          <box>
+            <size>7.25 0.15 0.5</size>
+          </box>
+        </geometry>
+        <pose frame=''>0 0 0.25 0 -0 0</pose>
+      </collision>
+      <visual name='west_wall_visual'>
+        <pose frame=''>0.55 0 0.25 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>6.15 0.15 0.5</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://media/materials/scripts/assessment_materials.material</uri>
+            <name>yellow</name>
+          </script>
+        </material>
+      </visual>
+      <visual name='west_wall_visual_bottom'>
+        <pose frame=''>-3.075 0 0.25 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>1.1 0.15 0.5</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://media/materials/scripts/assessment_materials.material</uri>
+            <name>cyan</name>
+          </script>
+        </material>
+      </visual>
+      <pose frame=''>-0.5 3.05 0 0 -0 0</pose>
+    </link>
+    <link name='north_wall'>
+      <collision name='north_wall_collision'>
+        <geometry>
+          <box>
+            <size>6 0.15 0.5</size>
+          </box>
+        </geometry>
+        <pose frame=''>0 0 0.25 0 -0 0</pose>
+      </collision>
+      <visual name='north_wall_visual'>
+        <pose frame=''>0 0 0.25 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>6 0.15 0.5</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://media/materials/scripts/assessment_materials.material</uri>
+            <name>yellow</name>
+          </script>
+        </material>
+      </visual>
+      <pose frame=''>3.05 0 0 0 0 -1.5708</pose>
+    </link>
+    <link name='east_wall'>
+      <collision name='east_wall_collision'>
+        <geometry>
+          <box>
+            <size>7.25 0.15 0.5</size>
+          </box>
+        </geometry>
+        <pose frame=''>0 0 0.25 0 -0 0</pose>
+      </collision>
+      <visual name='east_wall_visual'>
+        <pose frame=''>0 0 0.25 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>7.25 0.15 0.5</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://media/materials/scripts/assessment_materials.material</uri>
+            <name>yellow</name>
+          </script>
+        </material>
+      </visual>
+      <pose frame=''>-0.5 -3.05 0 0 -0 3.14159</pose>
+    </link>
+    <static>true</static>
+  </model>
+</sdf>
