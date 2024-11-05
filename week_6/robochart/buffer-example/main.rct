@@ -1,0 +1,26 @@
+controller ctrl0 {
+	event left : nat
+	event right : nat
+	stm stm0 {
+		var x : nat
+		event left : nat
+		event right : nat
+		initial i0
+		state s0 {
+		}
+		transition t0 {
+			from i0
+			to s0
+		}
+		transition t1 {
+			from s0
+			to s0
+			trigger left ? x
+			action right ! x
+		}
+	}
+
+	connection ctrl0 on left to stm0 on left
+	connection stm0 on right to ctrl0 on right
+}
+

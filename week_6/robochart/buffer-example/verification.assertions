@@ -1,0 +1,4 @@
+assertion A0: ctrl1 refines ctrl0 in the traces model
+assertion A1: ctrl0 refines ctrl1 in the traces model
+assertion A2: ctrl2 refines ctrl0 in the traces model
+assertion A3: ctrl2 is deadlock-free
