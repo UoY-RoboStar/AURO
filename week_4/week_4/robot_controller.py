@@ -17,7 +17,7 @@ import sys
 import rclpy
 from rclpy.node import Node
 from rclpy.signals import SignalHandlerOptions
-from rclpy.executors import ExternalShutdownException
+from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
 from rclpy.qos import QoSPresetProfiles
 
 from std_msgs.msg import Float32
