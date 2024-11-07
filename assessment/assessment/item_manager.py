@@ -234,7 +234,7 @@ class ItemManager(Node):
                     
         return response
 
-    def offload_item(self, request, response):
+    async def offload_item(self, request, response):
         '''
         Offloads an item held by the robot_id passed in the request message.
         The 'success' field of response is set to True if offloading has succeeded, and otherwise
@@ -265,9 +265,8 @@ class ItemManager(Node):
                     pose.position.z = 0.0
                     
                     # Use reference frame of the robot
-                    future = self.set_entity_state(robot.item_held, request.robot_id, pose)
-                    self.executor.spin_until_future_complete(future)
-
+                    await self.set_entity_state(robot.item_held, request.robot_id, pose)
+                    
                     # We drop it on the floor if we are in a non-zone
                     response.success = True
                     response.message = f"Item '{robot.item_held}' held by robot '{request.robot_id}' has been offloaded in the arena."
@@ -288,8 +287,7 @@ class ItemManager(Node):
                     pose.position.y = self.items[robot.item_held].y
                     pose.position.z = 0.0
                     
-                    future = self.set_entity_state(robot.item_held, 'world', pose)
-                    self.executor.spin_until_future_complete(future)
+                    await self.set_entity_state(robot.item_held, 'world', pose)
 
                     robot.item_held = None
                     robot.previous_item_held = None
@@ -394,7 +392,6 @@ class ItemManager(Node):
         request = GetModelList.Request()
         return self.get_model_list_client.call_async(request)
 
-
     def get_entity_state(self, name):
 
         while not self.get_entity_state_client.wait_for_service():
@@ -426,7 +423,7 @@ class ItemManager(Node):
 
         return False
     
-    def control_loop(self):
+    async def control_loop(self):
 
         if self.first_run:
             self.first_run = False
@@ -465,16 +462,11 @@ class ItemManager(Node):
 
                     self.get_logger().info(f'Spawning {item_id} of {colour} at ({x:.2f}, {y:.2f})')
 
-                    future = self.spawn_item(item_id, x, y, colour)
-                    self.executor.spin_until_future_complete(future)
+                    await self.spawn_item(item_id, x, y, colour)
 
-        future = self.spawn_item("ready", 0.0, 0.0, Colour.RED, z=-0.5)
-        self.executor.spin_until_future_complete(future)
+        await self.spawn_item("ready", 0.0, 0.0, Colour.RED, z=-0.5)
 
-        future = self.get_model_list()
-        self.executor.spin_until_future_complete(future)
-
-        model_list_msg = future.result()
+        model_list_msg = await self.get_model_list()
 
         # Update position of robots.
 
@@ -485,10 +477,7 @@ class ItemManager(Node):
 
         for robot_id, robot in self.robots.items():
 
-            future = self.get_entity_state(robot_id)
-            self.executor.spin_until_future_complete(future)
-
-            entity_state_msg = future.result()
+            entity_state_msg = await self.get_entity_state(robot_id)
             robot_position = entity_state_msg.state.pose.position
 
             robot.x = round(robot_position.x, 2)
@@ -514,8 +503,7 @@ class ItemManager(Node):
                 pose.position.y = 0.0
                 pose.position.z = 0.15
 
-                future = self.set_entity_state(robot.item_held, robot_id, pose)
-                self.executor.spin_until_future_complete(future)
+                await self.set_entity_state(robot.item_held, robot_id, pose)
 
         # Publish item holders
         item_holders = ItemHolders()
