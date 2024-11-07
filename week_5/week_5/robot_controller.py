@@ -72,6 +72,9 @@ class RobotController(Node):
         self.scan_triggered = [False] * 4 # Boolean value for each of the 4 LiDAR sensor sectors. True if obstacle detected within SCAN_THRESHOLD
         self.items = ItemList()
 
+        self.declare_parameter('robot_id', 'robot1')
+        self.robot_id = self.get_parameter('robot_id').value
+
         # Here we use two callback groups, to ensure that those in 'client_callback_group' can be executed
         # independently from those in 'timer_callback_group'. This allos calling the services below within
         # a callback handled by the timer_callback_group. See https://docs.ros.org/en/humble/How-To-Guides/Using-callback-groups.html
@@ -101,7 +104,7 @@ class RobotController(Node):
         # https://github.com/ros2/rclpy/blob/humble/rclpy/rclpy/qos.py#L80-L83
         self.odom_subscriber = self.create_subscription(
             Odometry,
-            '/odom',
+            'odom',
             self.odom_callback,
             10, callback_group=timer_callback_group)
         
@@ -114,7 +117,7 @@ class RobotController(Node):
         # https://github.com/ros2/rclpy/blob/humble/rclpy/rclpy/qos.py#L428-L431
         self.scan_subscriber = self.create_subscription(
             LaserScan,
-            '/scan',
+            'scan',
             self.scan_callback,
             QoSPresetProfiles.SENSOR_DATA.value, callback_group=timer_callback_group)
 
@@ -123,7 +126,7 @@ class RobotController(Node):
         # 
         # Gazebo ROS differential drive plugin subscribes to these messages, and converts them into left and right wheel speeds
         # https://github.com/ros-simulation/gazebo_ros_pkgs/blob/ros2/gazebo_plugins/src/gazebo_ros_diff_drive.cpp#L537-L555
-        self.cmd_vel_publisher = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.cmd_vel_publisher = self.create_publisher(Twist, 'cmd_vel', 10)
 
         #self.orientation_publisher = self.create_publisher(Float32, '/orientation', 10)
 
@@ -134,7 +137,7 @@ class RobotController(Node):
         #
         # http://docs.ros.org/en/noetic/api/visualization_msgs/html/msg/Marker.html
         # http://wiki.ros.org/rviz/DisplayTypes/Marker
-        self.marker_publisher = self.create_publisher(StringWithPose, '/marker_input', 10, callback_group=timer_callback_group)
+        self.marker_publisher = self.create_publisher(StringWithPose, 'marker_input', 10, callback_group=timer_callback_group)
 
         # Creates a timer that calls the control_loop method repeatedly - each loop represents single iteration of the FSM
         self.timer_period = 0.1 # 100 milliseconds = 10 Hz
@@ -291,7 +294,7 @@ class RobotController(Node):
 
                 if estimated_distance <= 0.35:
                     rqt = ItemRequest.Request()
-                    rqt.robot_id = 'robot1'
+                    rqt.robot_id = self.robot_id
                     try:
                         future = self.pick_up_service.call_async(rqt)
                         self.executor.spin_until_future_complete(future)
