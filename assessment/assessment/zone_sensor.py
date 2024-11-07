@@ -90,7 +90,7 @@ class ZoneSensor(Node):
 
         # For image segmentation, sets up masks in HSV colour space.
         cyan_mask = cv2.inRange(hsv, np.array([self.cyan[0][0][0], 100, 20]), np.array([self.cyan[0][0][0], 255,255]))
-        purple_mask = cv2.inRange(hsv, np.array([self.purple[0][0][0], 100, 20]), np.array([self.purple[0][0][0], 255,255]))
+        purple_mask = cv2.inRange(hsv, np.array([self.purple[0][0][0], 100, 20]), np.array([self.purple[0][0][0]+1, 255,255]))
         green_mask = cv2.inRange(hsv, np.array([self.green[0][0][0], 100, 20]), np.array([self.green[0][0][0], 255,255]))
         pink_mask = cv2.inRange(hsv, np.array([self.pink[0][0][0]-3, 100, 20]), np.array([self.pink[0][0][0], 255,255]))        
 
