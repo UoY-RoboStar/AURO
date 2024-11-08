@@ -218,7 +218,7 @@ class ItemManager(Node):
                 response.message = f"Robot '{request.robot_id}' is already holding an item"
             else:
                 for item_id, item in self.items.items():
-                    self.get_logger().info(f"Item '{item_id}': {item}")
+                    # self.get_logger().info(f"Item '{item_id}': {item}")
 
                     # Collects item if any is close enough.
                     if math.dist((robot.x, robot.y), (item.x, item.y)) < DISTANCE:
