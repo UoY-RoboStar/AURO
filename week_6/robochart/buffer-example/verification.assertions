@@ -1,4 +1,27 @@
-assertion A0: ctrl1 refines ctrl0 in the traces model
-assertion A1: ctrl0 refines ctrl1 in the traces model
-assertion A2: ctrl2 refines ctrl0 in the traces model
-assertion A3: ctrl2 is deadlock-free
+//
+// ctrl0 is the specification for a 1-place buffer, ie.
+// that can hold one value at a time.
+//
+// is ctrl1 a valid implementation of ctrl0?
+assertion A1: ctrl1 refines ctrl0 in the traces model
+// is ctrl0 a valid implementation of ctrl1? 
+assertion A2: ctrl0 refines ctrl1 in the traces model
+// if A0 and A1 pass, then the behaviour of 
+// ctrl0 is exactly the same as that of ctlr1
+
+// ctrl2 is *not* a valid implementation of ctrl0, so
+// the following assertion fails:
+assertion A3: ctrl2 refines ctrl0 in the traces model
+
+// However, note that ctrl2 is a valid specification 
+// of a 2-place buffer, ie. hold at most two values.
+//
+// Is ctrl3 a valid implementation?
+assertion A4: ctrl3 refines ctrl2 in the traces model
+// Is their behaviour, when considering their possible
+// traces of interaction, therefore equal?
+assertion A5: ctrl2 refines ctrl3 in the traces model
+
+// Example of a generic verification to check that a
+// component, in this case ctrl2, is deadlock-free.
+assertion A6: ctrl2 is deadlock-free
