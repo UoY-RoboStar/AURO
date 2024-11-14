@@ -73,8 +73,8 @@ This node processes the RGB camera image data and identifies other robots based 
 It publishes the following topics:
 * `robots`: of type [`RobotList`](../assessment_interfaces/msg/RobotList.msg), contains a list of the perceived robots, each with an indication of
   their perceived size, and relative offset with respect to the current view (x/y-axis).
-* `camera/image_items`: of type `Image`, contains the camera image with the information about the visible
-  items superimposed.
+* `camera/image_robots`: of type `Image`, contains the camera image with the information about the visible
+  robots superimposed.
 
 ### zone_sensor
 This node processes the RGB camera image data and identifies zones based on their colour.
