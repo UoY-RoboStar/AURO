@@ -1,0 +1,32 @@
+{
+    "name": "auro-wsl",
+    "build": { "dockerfile":"Dockerfile" },
+
+    // TODO: Check whether the following are really necessary.
+    "runArgs": [
+      "--device=/dev/dxg",
+      "--device=/dev/dri"
+    ],
+
+    // TODO: These mounts are redundant, in that, for best performance the repository should be
+    //       checked out inside the dev container, not outside it.
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "mounts": [
+      "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/vscode/.bash_history,type=bind",
+      // Following are needed to get WSLg working
+      "source=/usr/lib/wsl,target=/usr/lib/wsl,type=bind,readonly",
+      "source=/run/desktop/mnt/host/wslg,target=/mnt/wslg,type=bind,readonly",
+      "source=/run/desktop/mnt/host/wslg/.X11-unix,target=/tmp/.X11-unix,type=bind,readonly",
+    ],
+
+    // Windows solution via WSL2: https://stackoverflow.com/questions/73092750/how-to-show-gui-apps-from-docker-desktop-container-on-windows-11/75392952#75392952
+    "containerEnv": {
+      "LD_LIBRARY_PATH": "/usr/lib/wsl/lib",
+      "WAYLAND_DISPLAY": "wayland-0",
+      "XDG_RUNTIME_DIR": "/mnt/wslg/runtime-dir",
+      "DISPLAY": ":0",
+      "PULSE_SERVER": "/mnt/wslg/PulseServer"
+    }
+  
+  }
