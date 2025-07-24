@@ -8,10 +8,11 @@
     //     ]
     // },
     //"image": "ghcr.io/pefribeiro/ros2-tb3:main", //"build": { "dockerfile":"Dockerfile" },
-    "workspaceMount": "source=auro2025,target=/workspaces/${localWorkspaceFolderBasename},type=volume",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
     "mounts": [
-      "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/vscode/.bash_history,type=bind"
+      "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/ubuntu/.bash_history,type=bind",
+      "source=${localEnv:HOME}${localEnv:USERPROFILE}/,target=/home/ubuntu/homedir/,type=bind"
     ],
     "portsAttributes": {
         "6080": {
