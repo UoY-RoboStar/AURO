@@ -20,7 +20,8 @@
       "source=/run/desktop/mnt/host/wslg,target=/mnt/wslg,type=bind,readonly",
       "source=/run/desktop/mnt/host/wslg/.X11-unix,target=/tmp/.X11-unix,type=bind,readonly",
     ],
-
+    "postStartCommand": "touch /workspaces/.bash_history && ln -s /workspaces/.bash_history /home/ubuntu/.bash_history",
+    
     // Windows solution via WSL2: https://stackoverflow.com/questions/73092750/how-to-show-gui-apps-from-docker-desktop-container-on-windows-11/75392952#75392952
     "containerEnv": {
       "LD_LIBRARY_PATH": "/usr/lib/wsl/lib",
