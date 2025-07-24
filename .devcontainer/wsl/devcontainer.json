@@ -1,6 +1,6 @@
 {
     "name": "auro-wsl",
-    "build": { "dockerfile":"Dockerfile" },
+    "image": "ghcr.io/pefribeiro/ros2-tb3/auro-dev:latest",
 
     // TODO: Check whether the following are really necessary.
     "runArgs": [
