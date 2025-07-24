@@ -1,0 +1,35 @@
+{
+    "name": "auro-vnc",
+    "image": "ghcr.io/pefribeiro/ros2-tb3/auro-dev:latest",
+    // "build": { 
+    //     "dockerfile": "Dockerfile",
+    //     "options": [
+    //         "--platform=linux/amd64"
+    //     ]
+    // },
+    //"image": "ghcr.io/pefribeiro/ros2-tb3:main", //"build": { "dockerfile":"Dockerfile" },
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "mounts": [
+      "source=${localEnv:HOME}${localEnv:USERPROFILE},target=/home/ubuntu/homedir,type=bind"
+    ],
+    "remoteUser": "ubuntu",
+    "portsAttributes": {
+        "6080": {
+            "label": "Desktop"
+        }
+    },
+    "postStartCommand": "touch /workspaces/.bash_history && ln -s /workspaces/.bash_history /home/ubuntu/.bash_history"
+    //,
+    // Destkop available via VNC on the browser or via VNC client
+    // "forwardPorts": [6080,5901],
+    // "features": {
+    //     "ghcr.io/devcontainers/features/desktop-lite:1": {
+    //         "version": "latest",
+    //         "noVncVersion": "1.2.0",
+    //         "password": "vscode",
+    //         "webPort": "6080",
+    //         "vncPort": "5901"
+    //     }
+    // }
+  }
